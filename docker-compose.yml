@@ -13,4 +13,6 @@ services:
     command:
       - ./run.sh
   db:
-    image: postgres:latest
+    image: postgres:10.5
+    ports:
+      - "5432:5432"
