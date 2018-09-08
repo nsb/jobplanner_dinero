@@ -13,7 +13,7 @@ config :logger, level: :warn
 config :jobplanner_dinero, JobplannerDinero.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: "postgres",
-  password: "postgres",
+  password: "",
   database: "jobplanner_dinero_test",
-  hostname: "localhost",
+  hostname: "db",
   pool: Ecto.Adapters.SQL.Sandbox
