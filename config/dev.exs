@@ -52,7 +52,7 @@ config :phoenix, :stacktrace_depth, 20
 config :jobplanner_dinero, JobplannerDinero.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: "postgres",
-  password: "postgres",
+  password: "",
   database: "jobplanner_dinero_dev",
-  hostname: "localhost",
+  hostname: "db",
   pool_size: 10
