@@ -1,5 +1,8 @@
 help:
 	@echo "help                This help message"
 
-start:
+dev-start:
 	docker-compose up
+
+dev-build:
+	docker-compose build
