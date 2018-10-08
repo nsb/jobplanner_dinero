@@ -7,6 +7,7 @@ defmodule JobplannerDineroWeb.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :assign_current_user
   end
 
   pipeline :api do
@@ -17,6 +18,22 @@ defmodule JobplannerDineroWeb.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
+    get "/oauth", OauthController, :index
+  end
+
+  scope "/auth", JobplannerDineroWeb do
+    pipe_through :browser
+
+    get "/:provider", AuthController, :index
+    get "/:provider/callback", AuthController, :callback
+    delete "/logout", AuthController, :delete
+  end
+
+  # Fetch the current user from the session and add it to `conn.assigns`. This
+  # will allow you to have access to the current user in your views with
+  # `@current_user`.
+  defp assign_current_user(conn, _) do
+   assign(conn, :current_user, get_session(conn, :current_user))
   end
 
   # Other scopes may use custom stacks.
