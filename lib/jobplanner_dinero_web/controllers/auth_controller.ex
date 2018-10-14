@@ -8,7 +8,7 @@ defmodule JobplannerDineroWeb.AuthController do
   based on the chosen strategy.
   """
   def index(conn, %{"provider" => provider}) do
-    redirect conn, external: authorize_url!(provider)
+    redirect(conn, external: authorize_url!(provider))
   end
 
   def delete(conn, _params) do
@@ -39,19 +39,26 @@ defmodule JobplannerDineroWeb.AuthController do
     # If you need to make additional resource requests, you may want to store
     # the access token as well.
     conn
-    |> put_session(:current_user, user)
+    |> put_session(:current_user, user.id)
     |> put_session(:access_token, client.token.access_token)
     |> redirect(to: "/")
   end
 
-  defp authorize_url!("jobplanner"),   do: JobplannerOAuth2.authorize_url!
-  defp authorize_url!(_), do: raise "No matching provider available"
+  defp authorize_url!("jobplanner"), do: JobplannerOAuth2.authorize_url!()
+  defp authorize_url!(_), do: raise("No matching provider available")
 
-  defp get_token!("jobplanner", code),   do: JobplannerOAuth2.get_token!(code: code)
-  defp get_token!(_, _), do: raise "No matching provider available"
+  defp get_token!("jobplanner", code), do: JobplannerOAuth2.get_token!(code: code)
+  defp get_token!(_, _), do: raise("No matching provider available")
 
   defp get_user!("jobplanner", client) do
     %{body: user} = OAuth2.Client.get!(client, "https://api.myjobplanner.com/v1/users/me/")
-    %{name: user["name"], avatar: user["avatar_url"]}
+
+    %{
+      id: user["id"],
+      username: user["username"],
+      first_name: user["first_name"],
+      last_name: user["last_name"],
+      email: user["email"]
+    }
   end
 end
