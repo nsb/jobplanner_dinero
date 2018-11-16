@@ -1,6 +1,8 @@
 defmodule JobplannerDineroWeb.AuthController do
   use JobplannerDineroWeb, :controller
 
+  alias JobplannerDinero.Account.User
+  alias JobplannerDinero.Account.Business
   alias JobplannerDineroWeb.JobplannerOAuth2
 
   @doc """
@@ -11,6 +13,7 @@ defmodule JobplannerDineroWeb.AuthController do
     redirect(conn, external: authorize_url!(provider))
   end
 
+  @spec delete(Plug.Conn.t(), any()) :: Plug.Conn.t()
   def delete(conn, _params) do
     conn
     |> put_flash(:info, "You have been logged out!")
@@ -28,19 +31,19 @@ defmodule JobplannerDineroWeb.AuthController do
     # Exchange an auth code for an access token
     client = get_token!(provider, code)
 
-    # Request the user's data with the access token
-    user = get_user!(provider, client)
+    # Request the users businesses and save them.
+    businesses =
+      get_businesses!(provider, client)
+      |> Enum.map(fn business -> Business.upsert_by!(business, :jobplanner_id) end)
 
-    # Store the user in the session under `:current_user` and redirect to /.
-    # In most cases, we'd probably just store the user's ID that can be used
-    # to fetch from the database. In this case, since this example app has no
-    # database, I'm just storing the user map.
-    #
-    # If you need to make additional resource requests, you may want to store
-    # the access token as well.
+    # Request the user's data with the access token and save the user.
+    {:ok, user} =
+      get_user!(provider, client)
+      |> User.upsert_by(:jobplanner_id)
+
+    # Save the user id in the session under `:current_user` and redirect to /
     conn
     |> put_session(:current_user, user.id)
-    |> put_session(:access_token, client.token.access_token)
     |> redirect(to: "/")
   end
 
@@ -53,12 +56,26 @@ defmodule JobplannerDineroWeb.AuthController do
   defp get_user!("jobplanner", client) do
     %{body: user} = OAuth2.Client.get!(client, "https://api.myjobplanner.com/v1/users/me/")
 
-    %{
-      id: user["id"],
+    %User{
+      jobplanner_id: user["id"],
       username: user["username"],
       first_name: user["first_name"],
       last_name: user["last_name"],
-      email: user["email"]
+      email: user["email"],
+      jobplanner_access_token: client.token.access_token
     }
+  end
+
+  defp get_businesses!("jobplanner", client) do
+    %{body: %{"results" => businesses}} =
+      OAuth2.Client.get!(client, "https://api.myjobplanner.com/v1/businesses/")
+
+    Enum.map(businesses, fn business ->
+      %Business{
+        jobplanner_id: business["id"],
+        name: business["name"],
+        email: business["email"]
+      }
+    end)
   end
 end
