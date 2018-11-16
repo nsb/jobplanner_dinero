@@ -42,4 +42,10 @@ defmodule JobplannerDinero.Account.User do
      |> User.changeset(record_struct |> Map.from_struct)
      |> Repo.insert_or_update
    end
+
+  def upsert_by!(%User{} = record_struct, selector) do
+    {:ok, user} = upsert_by(record_struct, selector)
+    user
+  end
+
 end

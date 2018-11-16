@@ -1,6 +1,7 @@
 defmodule JobplannerDineroWeb.AuthController do
   use JobplannerDineroWeb, :controller
 
+  alias JobplannerDinero.Repo
   alias JobplannerDinero.Account.User
   alias JobplannerDinero.Account.Business
   alias JobplannerDineroWeb.JobplannerOAuth2
@@ -31,20 +32,31 @@ defmodule JobplannerDineroWeb.AuthController do
     # Exchange an auth code for an access token
     client = get_token!(provider, code)
 
-    # Request the users businesses and save them.
-    businesses =
-      get_businesses!(provider, client)
-      |> Enum.map(fn business -> Business.upsert_by!(business, :jobplanner_id) end)
+    {:ok, response} =
+      Repo.transaction(fn ->
+        # Request the users businesses and save them.
+        businesses =
+          get_businesses!(provider, client)
+          |> Enum.map(fn business ->
+            Business.upsert_by!(business, :jobplanner_id) |> Repo.preload(:users)
+          end)
 
-    # Request the user's data with the access token and save the user.
-    {:ok, user} =
-      get_user!(provider, client)
-      |> User.upsert_by(:jobplanner_id)
+        # Request the user's data with the access token and save the user with associated businesses.
+        user =
+          get_user!(provider, client)
+          |> User.upsert_by!(:jobplanner_id)
+          |> Repo.preload(:businesses)
+          |> Ecto.Changeset.change()
+          |> Ecto.Changeset.put_assoc(:businesses, businesses)
+          |> Repo.update!()
 
-    # Save the user id in the session under `:current_user` and redirect to /
-    conn
-    |> put_session(:current_user, user.id)
-    |> redirect(to: "/")
+        # Save the user id in the session under `:current_user` and redirect to /
+        conn
+        |> put_session(:current_user, user.id)
+        |> redirect(to: "/")
+      end)
+
+    response
   end
 
   defp authorize_url!("jobplanner"), do: JobplannerOAuth2.authorize_url!()
