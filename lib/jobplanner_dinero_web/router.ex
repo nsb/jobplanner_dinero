@@ -18,6 +18,7 @@ defmodule JobplannerDineroWeb.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
+    get "/business/:id", PageController, :show
     get "/oauth", OauthController, :index
   end
 

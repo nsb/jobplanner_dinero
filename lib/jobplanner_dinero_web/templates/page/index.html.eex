@@ -1,21 +1,17 @@
 <div class="jumbotron">
-  <h2><%= gettext "Welcome to %{name}!", name: "Phoenix" %></h2>
-  <p class="lead">A productive web framework that<br />does not compromise speed and maintainability.</p>
+  <h2><%= gettext "Welcome to %{name}!", name: "Dinero addon" %></h2>
+  <p class="lead">Automatically create Dinero invoices<br />from myJobPlanner.</p>
 </div>
 
 <div class="row marketing">
   <div class="col-lg-6">
-    <h4>Resources</h4>
+    <h4>Businesses</h4>
     <ul>
+      <%= for business <- businesses(@conn) do %>
       <li>
-        <a href="http://phoenixframework.org/docs/overview">Guides</a>
+        <%= link business.name, to: page_path(@conn, :show, business), class: "" %>
       </li>
-      <li>
-        <a href="https://hexdocs.pm/phoenix">Docs</a>
-      </li>
-      <li>
-        <a href="https://github.com/phoenixframework/phoenix">Source</a>
-      </li>
+      <% end %>
     </ul>
   </div>
 
