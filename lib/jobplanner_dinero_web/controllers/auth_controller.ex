@@ -52,7 +52,8 @@ defmodule JobplannerDineroWeb.AuthController do
 
         # Save the user id in the session under `:current_user` and redirect to /
         conn
-        |> put_session(:current_user, user.id)
+        |> put_session(:current_user_id, user.id)
+        |> put_flash(:info, "You have successfully signed in!")
         |> redirect(to: "/")
       end)
 
