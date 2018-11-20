@@ -17,8 +17,8 @@ defmodule JobplannerDineroWeb.Router do
   scope "/", JobplannerDineroWeb do
     pipe_through :browser # Use the default browser stack
 
-    get "/", PageController, :index
-    get "/business/:id", PageController, :show
+    get "/", BusinessController, :index
+    get "/business/:id", BusinessController, :show
     get "/oauth", OauthController, :index
   end
 

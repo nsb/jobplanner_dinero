@@ -1,4 +1,4 @@
-defmodule JobplannerDineroWeb.PageView do
+defmodule JobplannerDineroWeb.BusinessView do
   use JobplannerDineroWeb, :view
 
   def businesses(conn) do
