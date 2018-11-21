@@ -6,6 +6,7 @@ defmodule JobplannerDinero.Account.Business do
 
   schema "account_businesses" do
     field(:jobplanner_id, :integer)
+    field(:dinero_api_key, :string)
     field(:name, :string)
     field(:email, :string)
 
