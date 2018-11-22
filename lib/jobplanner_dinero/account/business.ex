@@ -7,6 +7,7 @@ defmodule JobplannerDinero.Account.Business do
   schema "account_businesses" do
     field(:jobplanner_id, :integer)
     field(:dinero_api_key, :string)
+    field(:is_active, :boolean, default: true)
     field(:name, :string)
     field(:email, :string)
 
@@ -21,7 +22,7 @@ defmodule JobplannerDinero.Account.Business do
 
   def changeset(%Business{} = business, params) do
     business
-    |> cast(params, [:jobplanner_id, :dinero_api_key, :name, :email])
+    |> cast(params, [:jobplanner_id, :dinero_api_key, :is_active, :name, :email])
     |> validate_required([:jobplanner_id, :name])
     |> validate_format(:email, ~r/@/)
   end
