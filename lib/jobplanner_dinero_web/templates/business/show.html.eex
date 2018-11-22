@@ -1,0 +1,5 @@
+<h2><%= @business.name %></h2>
+
+<div>
+  <%= link "Edit", to: business_path(@conn, :edit, @business.id) %>
+</div>

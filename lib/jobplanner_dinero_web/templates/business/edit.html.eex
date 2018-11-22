@@ -1,0 +1,14 @@
+<h2>Edit business: <%= @business.name %></h2>
+
+<%= form_for @changeset, business_path(@conn, :update, @business), fn f -> %>
+  <div>
+    <%= label f, :dinero_api_key %>
+    <%= text_input f, :dinero_api_key %>
+    <%= error_tag f, :dinero_api_key %>
+  </div>
+
+  <div>
+    <%= submit "Submit" %>
+  </div>
+
+<% end %>

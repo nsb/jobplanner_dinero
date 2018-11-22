@@ -21,8 +21,8 @@ defmodule JobplannerDinero.Account.Business do
 
   def changeset(%Business{} = business, params) do
     business
-    |> cast(params, [:jobplanner_id, :name, :email])
-    |> validate_required([:name])
+    |> cast(params, [:jobplanner_id, :dinero_api_key, :name, :email])
+    |> validate_required([:jobplanner_id, :name])
     |> validate_format(:email, ~r/@/)
   end
 
@@ -38,5 +38,9 @@ defmodule JobplannerDinero.Account.Business do
   def upsert_by!(%Business{} = record_struct, selector) do
     {:ok, business} = upsert_by(record_struct, selector)
     business
+  end
+
+  def change_business(%Business{} = business) do
+    Business.changeset(business, %{})
   end
 end
