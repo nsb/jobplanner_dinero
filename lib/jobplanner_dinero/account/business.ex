@@ -70,7 +70,7 @@ defmodule JobplannerDinero.Account.Business do
 
     case OAuth2.Client.post(client, @webhook_url, body) do
       {:ok, %{body: hook}} ->
-        Ecto.Changeset.change(business, jobplanner_webhook_id: hook["id"])
+        Ecto.Changeset.change(business, jobplanner_webhook_id: hook["id"], is_active: true)
         |> Repo.update
       {:error, error} ->
         {:error, error}
@@ -88,7 +88,7 @@ defmodule JobplannerDinero.Account.Business do
     if business.jobplanner_webhook_id do
       case OAuth2.Client.delete(client, "#{@webhook_url}#{business.jobplanner_webhook_id}/") do
         {:ok, _} ->
-          Ecto.Changeset.change(business, jobplanner_webhook_id: nil)
+          Ecto.Changeset.change(business, jobplanner_webhook_id: nil, is_active: false)
           |> Repo.update
         {:error, error} ->
           {:error, error}

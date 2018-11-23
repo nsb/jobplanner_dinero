@@ -6,7 +6,11 @@
 <div>
   <%= form_for @changeset, business_path(@conn, :activate, @business), fn _ -> %>
   <div>
-    <%= submit "Activate" %>
+    <%= if @business.is_active do %>
+      <%= submit "Deactivate" %>
+    <% else %>
+      <%= submit "Activate" %>
+    <% end %>
   </div>
 <% end %>
 </div>
