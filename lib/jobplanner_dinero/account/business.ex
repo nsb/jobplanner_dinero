@@ -62,7 +62,7 @@ defmodule JobplannerDinero.Account.Business do
 
   def create_invoice_webhook(client, business) do
     body = %{
-      "business" => business.id,
+      "business" => business.jobplanner_id,
       "target" => "http://requestbin.fullcontact.com/15svnt81",
       "event" => "invoice.added",
       "is_active" => true
@@ -85,12 +85,16 @@ defmodule JobplannerDinero.Account.Business do
   end
 
   def delete_invoice_webhook(client, business) do
-    case OAuth2.Client.delete(client, "#{@webhook_url}#{business.jobplanner_webhook_id}/") do
-      {:ok, _} ->
-        Ecto.Changeset.change(business, jobplanner_webhook_id: nil)
-        |> Repo.update
-      {:error, error} ->
-        {:error, error}
+    if business.jobplanner_webhook_id do
+      case OAuth2.Client.delete(client, "#{@webhook_url}#{business.jobplanner_webhook_id}/") do
+        {:ok, _} ->
+          Ecto.Changeset.change(business, jobplanner_webhook_id: nil)
+          |> Repo.update
+        {:error, error} ->
+          {:error, error}
+      end
+    else
+      {:ok, business}
     end
   end
 

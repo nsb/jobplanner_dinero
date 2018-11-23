@@ -52,7 +52,11 @@ defmodule JobplannerDineroWeb.BusinessController do
   def activate(conn, %{"id" => id}) do
     business = User.get_business(conn.assigns.current_user, String.to_integer(id))
 
-    case JobplannerOAuth2.client(conn.assigns.current_user.jobplanner_access_token)
+    client = JobplannerOAuth2.client(conn.assigns.current_user.jobplanner_access_token)
+
+    Business.delete_invoice_webhook(client, business)
+
+    case client
          |> OAuth2.Client.put_header("Content-Type", "application/json")
          |> Business.create_invoice_webhook(business) do
       {:ok, business} ->
@@ -67,7 +71,6 @@ defmodule JobplannerDineroWeb.BusinessController do
         |> redirect(to: business_path(conn, :show, business))
         |> halt()
     end
-
   end
 
   defp authorize_user(conn, _params) do
