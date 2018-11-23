@@ -3,8 +3,7 @@ defmodule JobplannerDineroWeb.JobplannerOAuth2 do
 
   # Public API
 
-  @spec client() :: OAuth2.Client.t()
-  def client do
+  def client(token \\ nil) do
     OAuth2.Client.new([
       strategy: __MODULE__,
       client_id: System.get_env("JOBPLANNER_CLIENT_ID") || "5fnB9M6l3Gl1uxFDqMTZpTuvXw7mcbxwQKnhA526",
@@ -12,7 +11,8 @@ defmodule JobplannerDineroWeb.JobplannerOAuth2 do
       redirect_uri: "https://localhost:4000/auth/jobplanner/callback",
       site: "https://api.myjobplanner.com",
       authorize_url: "https://api.myjobplanner.com/o/authorize/",
-      token_url: "https://api.myjobplanner.com/o/token/"
+      token_url: "https://api.myjobplanner.com/o/token/",
+      token: token
     ])
   end
 

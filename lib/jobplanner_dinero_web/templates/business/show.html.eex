@@ -3,3 +3,10 @@
 <div>
   <%= link "Edit", to: business_path(@conn, :edit, @business.id) %>
 </div>
+<div>
+  <%= form_for @changeset, business_path(@conn, :activate, @business), fn _ -> %>
+  <div>
+    <%= submit "Activate" %>
+  </div>
+<% end %>
+</div>

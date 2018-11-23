@@ -19,8 +19,10 @@ defmodule JobplannerDineroWeb.Router do
 
     get "/", BusinessController, :index
     get "/business/:id", BusinessController, :show
-    get "/business/:id/edit", BusinessController, :edit
     put "/business/:id", BusinessController, :update
+    get "/business/:id/edit", BusinessController, :edit
+    put "/business/:id/activate", BusinessController, :activate
+    put "/business/:id/deactivate", BusinessController, :deactivate
     get "/oauth", OauthController, :index
   end
 

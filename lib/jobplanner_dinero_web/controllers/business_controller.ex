@@ -1,6 +1,7 @@
 defmodule JobplannerDineroWeb.BusinessController do
   use JobplannerDineroWeb, :controller
   alias JobplannerDinero.Repo
+  alias JobplannerDineroWeb.JobplannerOAuth2
   alias JobplannerDinero.Auth.Authorizer
   alias JobplannerDinero.Account.User
   alias JobplannerDinero.Account.Business
@@ -15,7 +16,14 @@ defmodule JobplannerDineroWeb.BusinessController do
   def show(conn, %{"id" => id}) do
     business = User.get_business(conn.assigns.current_user, String.to_integer(id))
 
-    render(conn, "show.html", business: business)
+    case business.dinero_api_key do
+      nil ->
+        redirect(conn, to: business_path(conn, :edit, business))
+
+      _ ->
+        changeset = Business.change_business(business)
+        render(conn, "show.html", business: business, changeset: changeset)
+    end
   end
 
   def edit(conn, %{"id" => id}) do
@@ -39,6 +47,27 @@ defmodule JobplannerDineroWeb.BusinessController do
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", business: business, changeset: changeset)
     end
+  end
+
+  def activate(conn, %{"id" => id}) do
+    business = User.get_business(conn.assigns.current_user, String.to_integer(id))
+
+    case JobplannerOAuth2.client(conn.assigns.current_user.jobplanner_access_token)
+         |> OAuth2.Client.put_header("Content-Type", "application/json")
+         |> Business.create_invoice_webhook(business) do
+      {:ok, business} ->
+        conn
+        |> put_flash(:info, "Activated Dinero integration successfully")
+        |> redirect(to: business_path(conn, :show, business))
+        |> halt()
+
+      {:error, _} ->
+        conn
+        |> put_flash(:error, "Could not activate webhook")
+        |> redirect(to: business_path(conn, :show, business))
+        |> halt()
+    end
+
   end
 
   defp authorize_user(conn, _params) do
