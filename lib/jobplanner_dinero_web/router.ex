@@ -10,7 +10,7 @@ defmodule JobplannerDineroWeb.Router do
     plug JobplannerDineroWeb.Plugs.SetCurrentUser
   end
 
-  pipeline :api do
+  pipeline :webhook do
     plug :accepts, ["json"]
   end
 
@@ -35,7 +35,9 @@ defmodule JobplannerDineroWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", JobplannerDineroWeb do
-  #   pipe_through :api
-  # end
+  scope "/webhooks", JobplannerDineroWeb do
+    pipe_through :webhook
+
+    post "/invoice", InvoiceController, :create
+  end
 end
