@@ -11,8 +11,13 @@ config :jobplanner_dinero, JobplannerDineroWeb.Endpoint,
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
-  watchers: [node: ["node_modules/brunch/bin/brunch", "watch", "--stdin",
-                    cd: Path.expand("../assets", __DIR__)]]
+  watchers: [node: [
+    "node_modules/webpack/bin/webpack.js",
+    "--mode",
+    "development",
+    "--watch-stdin",
+    cd: Path.expand("../assets", __DIR__)
+  ]]
 
 # ## SSL Support
 #
@@ -50,7 +55,6 @@ config :phoenix, :stacktrace_depth, 20
 
 # Configure your database
 config :jobplanner_dinero, JobplannerDinero.Repo,
-  adapter: Ecto.Adapters.Postgres,
   username: "postgres",
   password: "",
   database: "jobplanner_dinero_dev",

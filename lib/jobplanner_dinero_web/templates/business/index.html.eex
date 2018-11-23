@@ -9,7 +9,7 @@
     <ul>
       <%= for business <- businesses(@conn) do %>
       <li>
-        <%= link business.name, to: business_path(@conn, :show, business), class: "" %>
+        <%= link business.name, to: Routes.business_path(@conn, :show, business), class: "" %>
       </li>
       <% end %>
     </ul>

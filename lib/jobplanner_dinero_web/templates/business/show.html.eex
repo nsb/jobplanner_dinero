@@ -1,17 +1,17 @@
 <h2><%= @business.name %></h2>
 
 <div>
-  <%= link "Edit", to: business_path(@conn, :edit, @business.id) %>
+  <%= link "Edit", to: Routes.business_path(@conn, :edit, @business.id) %>
 </div>
 <div>
   <%= if @business.is_active do %>
-    <%= form_for @changeset, business_path(@conn, :deactivate, @business), fn _ -> %>
+    <%= form_for @changeset, Routes.business_path(@conn, :deactivate, @business), fn _ -> %>
       <div>
         <%= submit "Deactivate" %>
       </div>
     <% end %>
   <% else %>
-    <%= form_for @changeset, business_path(@conn, :activate, @business), fn _ -> %>
+    <%= form_for @changeset, Routes.business_path(@conn, :activate, @business), fn _ -> %>
       <div>
         <%= submit "Activate" %>
       </div>

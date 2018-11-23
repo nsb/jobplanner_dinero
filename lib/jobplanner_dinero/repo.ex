@@ -1,5 +1,5 @@
 defmodule JobplannerDinero.Repo do
-  use Ecto.Repo, otp_app: :jobplanner_dinero
+  use Ecto.Repo, otp_app: :jobplanner_dinero, adapter: Ecto.Adapters.Postgres
 
   @doc """
   Dynamically loads the repository url from the

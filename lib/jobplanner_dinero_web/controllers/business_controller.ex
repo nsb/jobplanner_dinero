@@ -18,7 +18,7 @@ defmodule JobplannerDineroWeb.BusinessController do
 
     case business.dinero_api_key do
       nil ->
-        redirect(conn, to: business_path(conn, :edit, business))
+        redirect(conn, to: Routes.business_path(conn, :edit, business))
 
       _ ->
         changeset = Business.change_business(business)
@@ -42,7 +42,7 @@ defmodule JobplannerDineroWeb.BusinessController do
       {:ok, business} ->
         conn
         |> put_flash(:info, "Business updated sucessfully.")
-        |> redirect(to: business_path(conn, :show, business))
+        |> redirect(to: Routes.business_path(conn, :show, business))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", business: business, changeset: changeset)
@@ -62,13 +62,13 @@ defmodule JobplannerDineroWeb.BusinessController do
       {:ok, business} ->
         conn
         |> put_flash(:info, "Activated Dinero integration successfully")
-        |> redirect(to: business_path(conn, :show, business))
+        |> redirect(to: Routes.business_path(conn, :show, business))
         |> halt()
 
       {:error, _} ->
         conn
         |> put_flash(:error, "Could not activate webhook")
-        |> redirect(to: business_path(conn, :show, business))
+        |> redirect(to: Routes.business_path(conn, :show, business))
         |> halt()
     end
   end
@@ -82,13 +82,13 @@ defmodule JobplannerDineroWeb.BusinessController do
       {:ok, business} ->
         conn
         |> put_flash(:info, "Deactivated Dinero integration successfully")
-        |> redirect(to: business_path(conn, :show, business))
+        |> redirect(to: Routes.business_path(conn, :show, business))
         |> halt()
 
       {:error, _} ->
         conn
         |> put_flash(:error, "Could not deactivate Dinero integration")
-        |> redirect(to: business_path(conn, :show, business))
+        |> redirect(to: Routes.business_path(conn, :show, business))
         |> halt()
     end
   end
@@ -101,7 +101,7 @@ defmodule JobplannerDineroWeb.BusinessController do
     else
       conn
       |> put_flash(:error, "You are not authorized to access that page")
-      |> redirect(to: business_path(conn, :index))
+      |> redirect(to: Routes.business_path(conn, :index))
       |> halt()
     end
   end

@@ -21,7 +21,7 @@ defmodule JobplannerDineroWeb do
     quote do
       use Phoenix.Controller, namespace: JobplannerDineroWeb
       import Plug.Conn
-      import JobplannerDineroWeb.Router.Helpers
+      alias JobplannerDineroWeb.Router.Helpers, as: Routes
       import JobplannerDineroWeb.Gettext
     end
   end
@@ -37,7 +37,7 @@ defmodule JobplannerDineroWeb do
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
 
-      import JobplannerDineroWeb.Router.Helpers
+      alias JobplannerDineroWeb.Router.Helpers, as: Routes
       import JobplannerDineroWeb.ErrorHelpers
       import JobplannerDineroWeb.Gettext
     end

@@ -1,7 +1,9 @@
 defmodule JobplannerDineroWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :jobplanner_dinero
 
-  socket "/socket", JobplannerDineroWeb.UserSocket
+  socket "/socket", JobplannerDineroWeb.UserSocket,
+    websocket: true
+    # longpoll: [check_origin: ...]
 
   # Serve at "/" the static files from "priv/static" directory.
   #
@@ -24,7 +26,7 @@ defmodule JobplannerDineroWeb.Endpoint do
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
     pass: ["*/*"],
-    json_decoder: Poison
+    json_decoder: Jason
 
   plug Plug.MethodOverride
   plug Plug.Head
