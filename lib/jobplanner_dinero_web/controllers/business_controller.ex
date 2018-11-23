@@ -73,6 +73,26 @@ defmodule JobplannerDineroWeb.BusinessController do
     end
   end
 
+  def deactivate(conn, %{"id" => id}) do
+    business = User.get_business(conn.assigns.current_user, String.to_integer(id))
+
+    client = JobplannerOAuth2.client(conn.assigns.current_user.jobplanner_access_token)
+
+    case Business.delete_invoice_webhook(client, business) do
+      {:ok, business} ->
+        conn
+        |> put_flash(:info, "Deactivated Dinero integration successfully")
+        |> redirect(to: business_path(conn, :show, business))
+        |> halt()
+
+      {:error, _} ->
+        conn
+        |> put_flash(:error, "Could not deactivate Dinero integration")
+        |> redirect(to: business_path(conn, :show, business))
+        |> halt()
+    end
+  end
+
   defp authorize_user(conn, _params) do
     %{params: %{"id" => business_id}} = conn
 
