@@ -10,6 +10,7 @@ defmodule JobplannerDinero.Account.Business do
     field(:jobplanner_id, :integer)
     field(:jobplanner_webhook_id, :integer)
     field(:dinero_api_key, :string)
+    field(:dinero_access_token, :string)
     field(:is_active, :boolean, default: false)
     field(:name, :string)
     field(:email, :string)
@@ -63,7 +64,7 @@ defmodule JobplannerDinero.Account.Business do
   def create_invoice_webhook(client, business) do
     body = %{
       "business" => business.jobplanner_id,
-      "target" => "http://requestbin.fullcontact.com/15svnt81",
+      "target" => "https://api.myjobplanner.com/v1/hooks/",
       "event" => "invoice.added",
       "is_active" => true
     }
@@ -71,7 +72,8 @@ defmodule JobplannerDinero.Account.Business do
     case OAuth2.Client.post(client, @webhook_url, body) do
       {:ok, %{body: hook}} ->
         Ecto.Changeset.change(business, jobplanner_webhook_id: hook["id"], is_active: true)
-        |> Repo.update
+        |> Repo.update()
+
       {:error, error} ->
         {:error, error}
     end
@@ -89,7 +91,8 @@ defmodule JobplannerDinero.Account.Business do
       case OAuth2.Client.delete(client, "#{@webhook_url}#{business.jobplanner_webhook_id}/") do
         {:ok, _} ->
           Ecto.Changeset.change(business, jobplanner_webhook_id: nil, is_active: false)
-          |> Repo.update
+          |> Repo.update()
+
         {:error, error} ->
           {:error, error}
       end
@@ -102,6 +105,23 @@ defmodule JobplannerDinero.Account.Business do
     case delete_invoice_webhook(client, business) do
       {:ok, business} -> business
       {:error, error} -> raise error
+    end
+  end
+
+  def request_dinero_token(client_id, client_secret, api_key) do
+    encoded_client_id_and_secret = Base.encode64("#{client_id}:#{client_secret}")
+    case :hackney.request(
+      :post,
+      "https://authz.dinero.dk/dineroapi/oauth/token",
+      [{"Authorization", "Basic #{encoded_client_id_and_secret}"}, {"Content-Type", "application/x-www-form-urlencoded"}],
+      URI.encode_query(%{"grant_type" => "password", "scope" => "read write", "username" => api_key, "password" => api_key})
+    ) do
+      {:ok, status, respheaders, client} when is_integer(status) and status >= 200 and status < 400 ->
+        :hackney.body(client)
+      {:ok, status, respheaders, client} ->
+        {:ok, mesg} = :hackney.body(client)
+        {:error, mesg}
+      {:error, error} -> {:error, error}
     end
   end
 end

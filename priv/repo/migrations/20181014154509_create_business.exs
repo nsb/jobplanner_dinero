@@ -6,6 +6,7 @@ defmodule JobplannerDinero.Repo.Migrations.CreateBusiness do
       add(:jobplanner_id, :integer, null: false)
       add(:jobplanner_webhook_id, :integer)
       add(:dinero_api_key, :string)
+      add(:dinero_access_token, :string)
       add(:is_active, :boolean, default: false)
       add(:name, :string, null: false)
       add(:email, :string)

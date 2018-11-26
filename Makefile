@@ -12,3 +12,8 @@ dev-build:
 
 dev-shell:
 	docker-compose run web bash
+
+test:
+	docker-compose run web mix test
+
+.PHONY: test
