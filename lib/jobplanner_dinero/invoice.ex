@@ -5,6 +5,7 @@ defmodule JobplannerDinero.Invoice do
   alias JobplannerDinero.Invoice
 
   schema "invoices" do
+    field :dinero_id, :string
     field :invoice, :map
     belongs_to :business, JobplannerDinero.Account.Business
 

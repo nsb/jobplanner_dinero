@@ -3,6 +3,7 @@ defmodule JobplannerDinero.Repo.Migrations.CreateInvoices do
 
   def change do
     create table(:invoices) do
+      add :dinero_id, :string
       add :invoice, :map
       add :business_id, references(:account_businesses), null: false
 
