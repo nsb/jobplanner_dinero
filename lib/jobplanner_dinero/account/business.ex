@@ -8,6 +8,7 @@ defmodule JobplannerDinero.Account.Business do
 
   schema "account_businesses" do
     field(:jobplanner_id, :integer)
+    field(:dinero_id, :integer)
     field(:jobplanner_webhook_id, :integer)
     field(:dinero_api_key, :string)
     field(:dinero_access_token, :string)
@@ -28,6 +29,7 @@ defmodule JobplannerDinero.Account.Business do
     business
     |> cast(params, [
       :jobplanner_id,
+      :dinero_id,
       :jobplanner_webhook_id,
       :dinero_api_key,
       :is_active,

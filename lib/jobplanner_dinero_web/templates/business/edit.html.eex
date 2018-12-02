@@ -6,7 +6,11 @@
     <%= text_input f, :dinero_api_key %>
     <%= error_tag f, :dinero_api_key %>
   </div>
-
+  <div>
+    <%= label f, :dinero_id %>
+    <%= text_input f, :dinero_id %>
+    <%= error_tag f, :dinero_id %>
+  </div>
   <div>
     <%= submit "Submit" %>
   </div>

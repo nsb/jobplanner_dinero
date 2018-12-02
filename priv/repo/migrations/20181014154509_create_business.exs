@@ -4,6 +4,7 @@ defmodule JobplannerDinero.Repo.Migrations.CreateBusiness do
   def change do
     create table(:account_businesses) do
       add(:jobplanner_id, :integer, null: false)
+      add(:dinero_id, :integer)
       add(:jobplanner_webhook_id, :integer)
       add(:dinero_api_key, :string)
       add(:dinero_access_token, :string)
