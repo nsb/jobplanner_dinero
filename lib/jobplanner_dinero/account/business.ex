@@ -14,7 +14,7 @@ defmodule JobplannerDinero.Account.Business do
     field(:is_active, :boolean, default: false)
     field(:name, :string)
     field(:email, :string)
-
+    has_many(:invoices, JobplannerDinero.Invoice)
     many_to_many(
       :users,
       JobplannerDinero.Account.User,
@@ -116,9 +116,9 @@ defmodule JobplannerDinero.Account.Business do
       [{"Authorization", "Basic #{encoded_client_id_and_secret}"}, {"Content-Type", "application/x-www-form-urlencoded"}],
       URI.encode_query(%{"grant_type" => "password", "scope" => "read write", "username" => api_key, "password" => api_key})
     ) do
-      {:ok, status, respheaders, client} when is_integer(status) and status >= 200 and status < 400 ->
+      {:ok, status, _respheaders, client} when is_integer(status) and status >= 200 and status < 400 ->
         :hackney.body(client)
-      {:ok, status, respheaders, client} ->
+      {:ok, _status, _respheaders, client} ->
         {:ok, mesg} = :hackney.body(client)
         {:error, mesg}
       {:error, error} -> {:error, error}
