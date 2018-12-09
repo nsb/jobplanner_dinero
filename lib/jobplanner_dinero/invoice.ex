@@ -16,6 +16,7 @@ defmodule JobplannerDinero.Invoice do
     invoice
     |> cast(params, [:business, :invoice])
     |> validate_required([:business, :invoice])
+    |> foreign_key_constraint(:business)
   end
 
   def create_invoice(attrs \\ %{}) do

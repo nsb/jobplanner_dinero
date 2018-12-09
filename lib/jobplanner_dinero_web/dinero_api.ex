@@ -31,6 +31,6 @@ defmodule JobplannerDineroWeb.DineroApi do
       "Content-Type": "application/json"
     ]
 
-    get(url, headers, params: params)
+    get(url, headers, params)
   end
 end
