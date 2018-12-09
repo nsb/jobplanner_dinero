@@ -5,7 +5,7 @@ defmodule JobplannerDineroWeb.InvoiceControllerTest do
   alias JobplannerDinero.Account.Business
 
   setup do
-    business = %Business{name: "idealrent", jobplanner_id: 1} |> Repo.insert!()
+    business = %Business{name: "idealrent", jobplanner_id: 1, dinero_id: 1} |> Repo.insert!()
 
     webhook_data = %{
       "hook" => %{

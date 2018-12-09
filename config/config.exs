@@ -7,7 +7,8 @@ use Mix.Config
 
 # General application configuration
 config :jobplanner_dinero,
-  ecto_repos: [JobplannerDinero.Repo]
+  ecto_repos: [JobplannerDinero.Repo],
+  dinero_api: JobplannerDineroWeb.DineroApi
 
 # Configures the endpoint
 config :jobplanner_dinero, JobplannerDineroWeb.Endpoint,

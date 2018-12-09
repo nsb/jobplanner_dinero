@@ -44,7 +44,9 @@ defmodule JobplannerDinero.Mixfile do
       {:plug_cowboy, "~> 2.0"},
       {:oauth2, "~> 0.9"},
       {:jason, "~> 1.0"},
-      {:poison, "~> 3.0"}
+      {:poison, "~> 3.0"},
+      {:httpoison, "~> 1.4"},
+      {:mox, "~> 0.4"}
     ]
   end
 

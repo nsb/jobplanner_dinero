@@ -118,8 +118,9 @@ defmodule JobplannerDinero.Account.Business do
       [{"Authorization", "Basic #{encoded_client_id_and_secret}"}, {"Content-Type", "application/x-www-form-urlencoded"}],
       URI.encode_query(%{"grant_type" => "password", "scope" => "read write", "username" => api_key, "password" => api_key})
     ) do
-      {:ok, status, _respheaders, client} when is_integer(status) and status >= 200 and status < 400 ->
-        :hackney.body(client)
+      {:ok, status, _respheaders, client} when is_integer(status) and status in 200..299 ->
+        {:ok, resp} = :hackney.body(client)
+        Jason.decode(resp)
       {:ok, _status, _respheaders, client} ->
         {:ok, mesg} = :hackney.body(client)
         {:error, mesg}
