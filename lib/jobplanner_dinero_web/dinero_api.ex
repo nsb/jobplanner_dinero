@@ -31,6 +31,11 @@ defmodule JobplannerDineroWeb.DineroApi do
       "Content-Type": "application/json"
     ]
 
-    get(url, headers, params)
+    case get(url, headers, params) do
+      {:ok, %HTTPoison.Response{body: body}} ->
+        Jason.decode(body)
+      {:error, error} ->
+        {:error, error}
+    end
   end
 end

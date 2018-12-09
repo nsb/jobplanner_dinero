@@ -18,11 +18,10 @@ defmodule JobplannerDineroWeb.InvoiceController do
              @dinero_client_secret,
              invoice_with_business.business.dinero_api_key
            ),
-         {:ok, response} <-
+         {:ok, %{"Collection" => _contacts}} <-
            @dinero_api.get_contacts(invoice_with_business.business.dinero_id, access_token,
              queryFilter: "email eq #{client["email"]}"
            ) do
-      IO.inspect(response)
       text(conn, "Ok")
     else
       _err ->
