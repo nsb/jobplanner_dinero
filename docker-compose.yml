@@ -12,6 +12,11 @@ services:
       - db
     command:
       - ./run.sh
+    environment:
+      - JOBPLANNER_CLIENT_ID=${JOBPLANNER_CLIENT_ID}
+      - JOBPLANNER_CLIENT_SECRET=${JOBPLANNER_CLIENT_SECRET}
+      - DINERO_CLIENT_ID=${DINERO_CLIENT_ID}
+      - DINERO_CLIENT_SECRET=${DINERO_CLIENT_SECRET}
   db:
     image: postgres:10.5
     ports:

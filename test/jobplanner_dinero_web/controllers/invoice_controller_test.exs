@@ -1,6 +1,7 @@
 defmodule JobplannerDineroWeb.InvoiceControllerTest do
   use JobplannerDineroWeb.ConnCase
 
+  import Mox
   alias JobplannerDinero.Repo
   alias JobplannerDinero.Account.Business
 
@@ -77,10 +78,80 @@ defmodule JobplannerDineroWeb.InvoiceControllerTest do
       }
     }
 
-    %{webhook_data: webhook_data, business: business}
+    contacts_response = %{
+      "Collection" => [
+        %{
+          "ContactGuid" => "a5f62248-ae7c-4a04-b83d-aa34f0e62ce3",
+          "CreatedAt" => "2018-12-08T18:52:45.9706751+00:00",
+          "UpdatedAt" => "2018-12-08T18:52:45.9706751+00:00",
+          "DeletedAt" => "2018-12-08T18:52:45.9706751+00:00",
+          "IsDebitor" => true,
+          "IsCreditor" => true,
+          "ExternalReference" => "Fx. WebShopID:42",
+          "Name" => "John Doe",
+          "Street" => "Main road 42",
+          "ZipCode" => "2100",
+          "City" => "Copenhagen",
+          "CountryKey" => "DK",
+          "Phone" => "+45 99 99 99 99",
+          "Email" => "test@test.com",
+          "Webpage" => "test.com",
+          "AttPerson" => "Donald Duck",
+          "VatNumber" => "12345674",
+          "EanNumber" => "1111000022223",
+          "PaymentConditionType" => "Netto",
+          "PaymentConditionNumberOfDays" => 8,
+          "IsPerson" => false
+        },
+        %{
+          "ContactGuid" => "a5f62248-ae7c-4a04-b83d-aa34f0e62ce3",
+          "CreatedAt" => "2018-12-08T18:52:45.9706751+00:00",
+          "UpdatedAt" => "2018-12-08T18:52:45.9706751+00:00",
+          "DeletedAt" => "2018-12-08T18 =>52:45.9706751+00:00",
+          "IsDebitor" => true,
+          "IsCreditor" => true,
+          "ExternalReference" => "Fx. WebShopID:42",
+          "Name" => "John Doe",
+          "Street" => "Main road 42",
+          "ZipCode" => "2100",
+          "City" => "Copenhagen",
+          "CountryKey" => "DK",
+          "Phone" => "+45 99 99 99 99",
+          "Email" => "test@test.com",
+          "Webpage" => "test.com",
+          "AttPerson" => "Donald Duck",
+          "VatNumber" => "12345674",
+          "EanNumber" => "1111000022223",
+          "PaymentConditionType" => "Netto",
+          "PaymentConditionNumberOfDays" => 8,
+          "IsPerson" => false
+        }
+      ],
+      "Pagination" => %{
+        "MaxPageSizeAllowed" => 0,
+        "PageSize" => 0,
+        "Result" => 0,
+        "ResultWithoutFilter" => 0,
+        "Page" => 0
+      }
+    }
+
+    %{webhook_data: webhook_data, contacts_response: contacts_response, business: business}
   end
 
-  test "CREATE /webhooks/invoice", %{conn: conn, webhook_data: webhook_data} do
+  test "CREATE /webhooks/invoice", %{
+    conn: conn,
+    webhook_data: webhook_data,
+    contacts_response: contacts_response
+  } do
+    expect(JobplannerDineroWeb.DineroApiMock, :authentication, fn _, _, _ ->
+      {:ok, %{"access_token" => "abc"}}
+    end)
+
+    expect(JobplannerDineroWeb.DineroApiMock, :get_contacts, fn _, _, _ ->
+      {:ok, contacts_response}
+    end)
+
     conn = post(conn, "/webhooks/invoice", webhook_data)
     assert text_response(conn, 200) =~ "Ok"
   end
