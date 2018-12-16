@@ -18,9 +18,16 @@ defmodule JobplannerDineroWeb.InvoiceController do
              @dinero_client_secret,
              invoice_with_business.business.dinero_api_key
            ),
-         {:ok, %{"Collection" => _contacts}} <-
+         {:ok, %{"Collection" => contacts}} when is_list(contacts) and length(contacts) >= 1 <-
            @dinero_api.get_contacts(invoice_with_business.business.dinero_id, access_token,
              queryFilter: "email eq #{client["email"]}"
+           ),
+         {:ok, _response} <-
+           @dinero_api.create_invoice(
+             invoice_with_business.business.dinero_id,
+             access_token,
+             List.first(contacts) |> Map.get("ContactGuid"),
+             invoice
            ) do
       text(conn, "Ok")
     else

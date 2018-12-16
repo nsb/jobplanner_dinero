@@ -152,6 +152,10 @@ defmodule JobplannerDineroWeb.InvoiceControllerTest do
       {:ok, contacts_response}
     end)
 
+    expect(JobplannerDineroWeb.DineroApiMock, :create_invoice, fn _, _, _, _ ->
+      {:ok, nil}
+    end)
+
     conn = post(conn, "/webhooks/invoice", webhook_data)
     assert text_response(conn, 200) =~ "Ok"
   end

@@ -12,16 +12,28 @@ defmodule JobplannerDineroWeb.DineroApi do
     encoded_client_id_and_secret = Base.encode64("#{client_id}:#{client_secret}")
 
     url = "https://authz.dinero.dk/dineroapi/oauth/token"
-    body = URI.encode_query(%{"grant_type" => "password", "scope" => "read write", "username" => api_key, "password" => api_key})
-    headers = [{"Authorization", "Basic #{encoded_client_id_and_secret}"}, {"Content-Type", "application/x-www-form-urlencoded"}]
+
+    body =
+      URI.encode_query(%{
+        "grant_type" => "password",
+        "scope" => "read write",
+        "username" => api_key,
+        "password" => api_key
+      })
+
+    headers = [
+      {"Authorization", "Basic #{encoded_client_id_and_secret}"},
+      {"Content-Type", "application/x-www-form-urlencoded"}
+    ]
+
     case HTTPoison.post(url, body, headers) do
       {:ok, %HTTPoison.Response{body: body}} ->
         Jason.decode(body)
+
       {:error, error} ->
         {:error, error}
     end
   end
-
 
   def get_contacts(dinero_id, access_token, params) do
     url = "/#{dinero_id}/contacts"
@@ -34,8 +46,25 @@ defmodule JobplannerDineroWeb.DineroApi do
     case get(url, headers, params) do
       {:ok, %HTTPoison.Response{body: body}} ->
         Jason.decode(body)
+
       {:error, error} ->
         {:error, error}
     end
+  end
+
+  def create_invoice(dinero_id, access_token, contact_id, _invoice_data) do
+    url = "/#{dinero_id}/invoices"
+
+    headers = [
+      Authorization: "Bearer #{access_token}",
+      "Content-Type": "application/json"
+    ]
+
+    body = %{
+      "ContactGuid" => contact_id
+    }
+
+    post(url, body, headers)
+    {:ok, %{}}
   end
 end
