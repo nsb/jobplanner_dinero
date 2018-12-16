@@ -5,6 +5,7 @@ defmodule Dinero.DineroProductLine do
 
   use Ecto.Schema
 
+  @derive {Jason.Encoder, only: [:BaseAmountValue, :Quantity]}
   embedded_schema do
     field(:BaseAmountValue, :decimal)
     field(:ProductGuid, :string)
@@ -51,6 +52,7 @@ end
 defmodule Dinero.DineroInvoice do
   use Ecto.Schema
 
+  @derive {Jason.Encoder, only: [:ContactGuid, :Date, :ProductLines]}
   embedded_schema do
     field(:ContactGuid, :string)
     field(:ExternalReference, :string)
@@ -59,7 +61,7 @@ defmodule Dinero.DineroInvoice do
   end
 end
 
-defmodule JobplannerDineroWeb.DineroApi do
+defmodule Dinero.DineroApi do
   @behaviour Dinero.DineroApiBehaviour
   use HTTPoison.Base
 
