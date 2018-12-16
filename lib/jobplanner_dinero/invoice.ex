@@ -24,4 +24,12 @@ defmodule JobplannerDinero.Invoice do
     |> Ecto.Changeset.change()
     |> Repo.insert()
   end
+
+  def to_dinero_invoice(%Invoice{} = _invoice, contact_id) do
+    %Dinero.DineroInvoice{
+      ContactGuid: contact_id,
+      Date: Date.utc_today(),
+      ProductLines: []
+    }
+  end
 end

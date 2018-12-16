@@ -1,4 +1,4 @@
-defmodule JobplannerDineroWeb.DineroApiBehaviour do
+defmodule Dinero.DineroApiBehaviour do
   @type method :: :get | :post | :put | :patch | :delete | :options | :head
   @type headers :: [{atom, binary}] | [{binary, binary}] | %{binary => binary} | any
   @type url :: binary | any
@@ -9,5 +9,5 @@ defmodule JobplannerDineroWeb.DineroApiBehaviour do
   @callback authentication(binary, binary, binary) :: {:ok, any} | {:error, Error.t()}
   @callback get_contacts(integer, binary, params) ::
               {:ok, Response.t() | AsyncResponse.t()} | {:error, Error.t()}
-  @callback create_invoice(integer, binary, integer, map) :: {:ok, map} | {:error, Error.t()}
+  @callback create_invoice(integer, binary, map) :: {:ok, map} | {:error, Error.t()}
 end

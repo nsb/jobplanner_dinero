@@ -81,57 +81,15 @@ defmodule JobplannerDineroWeb.InvoiceControllerTest do
     contacts_response = %{
       "Collection" => [
         %{
-          "ContactGuid" => "a5f62248-ae7c-4a04-b83d-aa34f0e62ce3",
-          "CreatedAt" => "2018-12-08T18:52:45.9706751+00:00",
-          "UpdatedAt" => "2018-12-08T18:52:45.9706751+00:00",
-          "DeletedAt" => "2018-12-08T18:52:45.9706751+00:00",
-          "IsDebitor" => true,
-          "IsCreditor" => true,
-          "ExternalReference" => "Fx. WebShopID:42",
-          "Name" => "John Doe",
-          "Street" => "Main road 42",
-          "ZipCode" => "2100",
-          "City" => "Copenhagen",
-          "CountryKey" => "DK",
-          "Phone" => "+45 99 99 99 99",
-          "Email" => "test@test.com",
-          "Webpage" => "test.com",
-          "AttPerson" => "Donald Duck",
-          "VatNumber" => "12345674",
-          "EanNumber" => "1111000022223",
-          "PaymentConditionType" => "Netto",
-          "PaymentConditionNumberOfDays" => 8,
-          "IsPerson" => false
-        },
-        %{
-          "ContactGuid" => "a5f62248-ae7c-4a04-b83d-aa34f0e62ce3",
-          "CreatedAt" => "2018-12-08T18:52:45.9706751+00:00",
-          "UpdatedAt" => "2018-12-08T18:52:45.9706751+00:00",
-          "DeletedAt" => "2018-12-08T18 =>52:45.9706751+00:00",
-          "IsDebitor" => true,
-          "IsCreditor" => true,
-          "ExternalReference" => "Fx. WebShopID:42",
-          "Name" => "John Doe",
-          "Street" => "Main road 42",
-          "ZipCode" => "2100",
-          "City" => "Copenhagen",
-          "CountryKey" => "DK",
-          "Phone" => "+45 99 99 99 99",
-          "Email" => "test@test.com",
-          "Webpage" => "test.com",
-          "AttPerson" => "Donald Duck",
-          "VatNumber" => "12345674",
-          "EanNumber" => "1111000022223",
-          "PaymentConditionType" => "Netto",
-          "PaymentConditionNumberOfDays" => 8,
-          "IsPerson" => false
+          "contactGuid" => "a5f62248-ae7c-4a04-b83d-aa34f0e62ce3",
+          "name" => "Donald Trump"
         }
       ],
       "Pagination" => %{
-        "MaxPageSizeAllowed" => 0,
-        "PageSize" => 0,
-        "Result" => 0,
-        "ResultWithoutFilter" => 0,
+        "MaxPageSizeAllowed" => 1000,
+        "PageSize" => 100,
+        "Result" => 1,
+        "ResultWithoutFilter" => 2,
         "Page" => 0
       }
     }
@@ -144,19 +102,19 @@ defmodule JobplannerDineroWeb.InvoiceControllerTest do
     webhook_data: webhook_data,
     contacts_response: contacts_response
   } do
-    expect(JobplannerDineroWeb.DineroApiMock, :authentication, fn _, _, _ ->
+    expect(Dinero.DineroApiMock, :authentication, fn _, _, _ ->
       {:ok, %{"access_token" => "abc"}}
     end)
 
-    expect(JobplannerDineroWeb.DineroApiMock, :get_contacts, fn _, _, _ ->
+    expect(Dinero.DineroApiMock, :get_contacts, fn _, _, _ ->
       {:ok, contacts_response}
     end)
 
-    expect(JobplannerDineroWeb.DineroApiMock, :create_invoice, fn _, _, _, _ ->
+    expect(Dinero.DineroApiMock, :create_invoice, fn _, _, _ ->
       {:ok, nil}
     end)
 
     conn = post(conn, "/webhooks/invoice", webhook_data)
-    assert text_response(conn, 200) =~ "Ok"
+    assert json_response(conn, 200) == %{"message" => "Ok"}
   end
 end

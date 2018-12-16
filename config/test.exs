@@ -1,7 +1,7 @@
 use Mix.Config
 
 config :jobplanner_dinero,
-  dinero_api: JobplannerDineroWeb.DineroApiMock
+  dinero_api: Dinero.DineroApiMock
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.

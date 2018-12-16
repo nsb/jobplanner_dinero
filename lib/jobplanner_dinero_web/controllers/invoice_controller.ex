@@ -26,15 +26,14 @@ defmodule JobplannerDineroWeb.InvoiceController do
            @dinero_api.create_invoice(
              invoice_with_business.business.dinero_id,
              access_token,
-             List.first(contacts) |> Map.get("ContactGuid"),
-             invoice
+             Invoice.to_dinero_invoice(invoice, List.first(contacts) |> Map.get("contactGuid"))
            ) do
-      text(conn, "Ok")
+      json(conn, %{"message" => "Ok"})
     else
-      _err ->
+      {_, err} ->
         conn
-        |> put_status(401)
-        |> text("Error")
+        |> put_status(400)
+        |> json(err)
     end
   end
 end
