@@ -29,7 +29,16 @@ defmodule JobplannerDinero.Invoice do
     %Dinero.DineroInvoice{
       ContactGuid: contact_id,
       Date: Date.utc_today(),
-      ProductLines: []
+      ProductLines: [
+        %Dinero.DineroProductLine{
+          BaseAmountValue: 20.0,
+          Quantity: 5.0,
+          AccountNumber: 1000,
+          Description: "Standard rengøring",
+          LineType: "Product",
+          Unit: "session"
+        }
+      ]
     }
   end
 end
