@@ -5,7 +5,16 @@ defmodule Dinero.DineroProductLine do
 
   use Ecto.Schema
 
-  @derive {Jason.Encoder, only: [:BaseAmountValue, :Description, :Quantity, :AccountNumber, :Unit, :LineType]}
+  @derive {Jason.Encoder,
+           only: [
+             :BaseAmountValue,
+             :Description,
+             :Comments,
+             :Quantity,
+             :AccountNumber,
+             :Unit,
+             :LineType
+           ]}
   embedded_schema do
     field(:BaseAmountValue, :decimal)
     field(:ProductGuid, :string)

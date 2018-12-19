@@ -30,7 +30,13 @@ defmodule JobplannerDinero.Invoice do
       ContactGuid: contact_id,
       Date: Date.utc_today(),
       ProductLines: Enum.flat_map(invoice["visits"], fn visit ->
-        Enum.map(visit["line_items"], &line_item_to_product_line/1)
+        Enum.map(visit["line_items"], fn line_item ->
+          date =
+            case DateTime.from_iso8601(visit["begins"]) do
+              {:ok, dt, _} -> Cldr.Date.to_string!(dt, locale: "da")
+            end
+          %{ line_item_to_product_line(line_item) | Comments: date }
+        end)
       end)
     }
   end

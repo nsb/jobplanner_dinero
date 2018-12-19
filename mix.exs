@@ -8,7 +8,7 @@ defmodule JobplannerDinero.Mixfile do
       elixir: "~> 1.7.3",
       elixirc_paths: elixirc_paths(Mix.env),
       elixirc_options: [warnings_as_errors: true],
-      compilers: [:phoenix, :gettext] ++ Mix.compilers,
+      compilers: [:phoenix, :gettext] ++ Mix.compilers  ++ [:cldr],
       start_permanent: Mix.env == :prod,
       aliases: aliases(),
       deps: deps()
@@ -47,7 +47,9 @@ defmodule JobplannerDinero.Mixfile do
       {:jason, "~> 1.0"},
       {:poison, "~> 3.0"},
       {:httpoison, "~> 1.4"},
-      {:mox, "~> 0.4"}
+      {:mox, "~> 0.4"},
+      {:nimble_parsec, "~> 0.4.0"},
+      {:ex_cldr_dates_times, "~> 1.4.0"}
     ]
   end
 
