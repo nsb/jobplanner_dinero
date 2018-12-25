@@ -9,5 +9,6 @@ defmodule Dinero.DineroApiBehaviour do
   @callback authentication(binary, binary, binary) :: {:ok, any} | {:error, Error.t()}
   @callback get_contacts(integer, binary, params) ::
               {:ok, Response.t() | AsyncResponse.t()} | {:error, Error.t()}
+  @callback create_contact(integer, binary, any) :: {:ok, map} | {:error, Error.t()}
   @callback create_invoice(integer, binary, map) :: {:ok, map} | {:error, Error.t()}
 end

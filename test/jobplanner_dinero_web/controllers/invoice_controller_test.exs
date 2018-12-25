@@ -78,7 +78,7 @@ defmodule JobplannerDineroWeb.InvoiceControllerTest do
       }
     }
 
-    contacts_response = %{
+    get_contacts_response = %{
       "Collection" => [
         %{
           "contactGuid" => "a5f62248-ae7c-4a04-b83d-aa34f0e62ce3",
@@ -94,23 +94,72 @@ defmodule JobplannerDineroWeb.InvoiceControllerTest do
       }
     }
 
-    %{webhook_data: webhook_data, contacts_response: contacts_response, business: business}
+    create_contact_response = %{
+      "ContactGuid" => "a5f62248-ae7c-4a04-b83d-aa34f0e62ce3"
+    }
+
+    %{
+      webhook_data: webhook_data,
+      get_contacts_response: get_contacts_response,
+      create_contact_response: create_contact_response,
+      business: business
+    }
   end
 
-  test "CREATE /webhooks/invoice", %{
+  test "CREATE /webhooks/invoice with existing contact", %{
     conn: conn,
     webhook_data: webhook_data,
-    contacts_response: contacts_response
+    get_contacts_response: get_contacts_response
   } do
     expect(Dinero.DineroApiMock, :authentication, fn _, _, _ ->
       {:ok, %{"access_token" => "abc"}}
     end)
 
-    expect(Dinero.DineroApiMock, :get_contacts, fn _, _, _ ->
-      {:ok, contacts_response}
+    expect(Dinero.DineroApiMock, :get_contacts, fn _,
+                                                   _,
+                                                   [queryFilter: "Email eq 'trump@example.com'"] ->
+      {:ok, get_contacts_response}
     end)
 
     expect(Dinero.DineroApiMock, :create_invoice, fn _, _, _ ->
+      {:ok, nil}
+    end)
+
+    conn = post(conn, "/webhooks/invoice", webhook_data)
+    assert json_response(conn, 200) == %{"message" => "Ok"}
+  end
+
+  test "CREATE /webhooks/invoice with non existing contact", %{
+    conn: conn,
+    business: %{dinero_id: dinero_id},
+    webhook_data: webhook_data,
+    create_contact_response: create_contact_response
+  } do
+    expect(Dinero.DineroApiMock, :authentication, fn _, _, _ ->
+      {:ok, %{"access_token" => "abc"}}
+    end)
+
+    expect(Dinero.DineroApiMock, :get_contacts, fn ^dinero_id,
+                                                   "abc",
+                                                   [queryFilter: "Email eq 'trump@example.com'"] ->
+      {:ok,
+       %{
+         "Collection" => [],
+         "Pagination" => %{
+           "MaxPageSizeAllowed" => 1000,
+           "PageSize" => 100,
+           "Result" => 0,
+           "ResultWithoutFilter" => 0,
+           "Page" => 0
+         }
+       }}
+    end)
+
+    expect(Dinero.DineroApiMock, :create_contact, fn ^dinero_id, "abc", %Dinero.DineroContact{} ->
+      {:ok, create_contact_response}
+    end)
+
+    expect(Dinero.DineroApiMock, :create_invoice, fn ^dinero_id, "abc", %Dinero.DineroInvoice{} ->
       {:ok, nil}
     end)
 
