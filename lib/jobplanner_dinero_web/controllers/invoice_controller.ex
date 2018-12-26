@@ -75,6 +75,7 @@ defmodule JobplannerDineroWeb.InvoiceController do
 
   defp jobplanner_client_to_dinero_contact(client, property) do
     %Dinero.DineroContact{
+      ExternalReference: "myjobplanner:#{client["id"]}",
       Name: "#{client["first_name"]} #{client["last_name"]}",
       Street: property["address1"],
       ZipCode: property["zip_code"],
