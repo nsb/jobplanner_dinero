@@ -117,7 +117,10 @@ defmodule JobplannerDineroWeb.InvoiceControllerTest do
 
     expect(Dinero.DineroApiMock, :get_contacts, fn _,
                                                    _,
-                                                   [queryFilter: "Email eq 'trump@example.com'"] ->
+                                                   [
+                                                     queryFilter:
+                                                       "ExternalReference eq 'myjobplanner:1363'"
+                                                   ] ->
       {:ok, get_contacts_response}
     end)
 
@@ -139,9 +142,7 @@ defmodule JobplannerDineroWeb.InvoiceControllerTest do
       {:ok, %{"access_token" => "abc"}}
     end)
 
-    expect(Dinero.DineroApiMock, :get_contacts, fn ^dinero_id,
-                                                   "abc",
-                                                   [queryFilter: "Email eq 'trump@example.com'"] ->
+    expect(Dinero.DineroApiMock, :get_contacts, 2, fn ^dinero_id, "abc", [queryFilter: _] ->
       {:ok,
        %{
          "Collection" => [],

@@ -58,11 +58,23 @@ defmodule JobplannerDineroWeb.InvoiceController do
          access_token,
          %{"client" => client, "property" => property} = _invoice
        ) do
-    case @dinero_api.get_contacts(dinero_id, access_token,
-           queryFilter: "Email eq '#{client["email"]}'"
-         ) do
-      {:ok, %{"Collection" => contacts}} when is_list(contacts) and length(contacts) >= 1 ->
-        {:ok, Enum.at(contacts, 0)}
+    queries = [
+      "ExternalReference eq 'myjobplanner:#{client["id"]}'",
+      "Email eq '#{client["email"]}'"
+    ]
+
+    case Enum.find_value(queries, nil, fn query ->
+           case @dinero_api.get_contacts(dinero_id, access_token, queryFilter: query) do
+             {:ok, %{"Collection" => contacts}}
+             when is_list(contacts) and length(contacts) >= 1 ->
+               {:ok, Enum.at(contacts, 0)}
+
+             _ ->
+               nil
+           end
+         end) do
+      {:ok, contact} ->
+        {:ok, contact}
 
       _ ->
         @dinero_api.create_contact(
