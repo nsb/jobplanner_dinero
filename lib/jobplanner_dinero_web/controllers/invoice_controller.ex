@@ -10,31 +10,39 @@ defmodule JobplannerDineroWeb.InvoiceController do
   @dinero_client_secret System.get_env("DINERO_CLIENT_SECRET")
 
   def create(conn, %{"hook" => %{"event" => "invoice.added"}, "data" => data}) do
+    # save invoice to database
     with {:ok,
-          %{invoice: %{"client" => _client, "property" => _property} = webhook_data} = invoice} <-
+          %{invoice: %{"client" => _client, "property" => _property} = invoice} = webhook_data} <-
            Invoice.create_invoice(data),
-         invoice_with_business <- Repo.preload(invoice, :business),
+
+         # load related business
+         invoice_with_business <- Repo.preload(webhook_data, :business),
+
+         # get access token from Dinero
          {:ok, %{"access_token" => access_token}} <-
            @dinero_api.authentication(
              @dinero_client_id,
              @dinero_client_secret,
              invoice_with_business.business.dinero_api_key
            ),
-         #  {:ok, %{"Collection" => contacts}} when is_list(contacts) and length(contacts) >= 1 <-
-         #    @dinero_api.get_contacts(invoice_with_business.business.dinero_id, access_token,
-         #      queryFilter: "email eq #{client["email"]}"
-         #    ),
+
+         # get or create Dinero contact
          {:ok, contact} <-
            get_or_create_contact(
              invoice_with_business.business.dinero_id,
              access_token,
-             webhook_data
+             invoice
            ),
+
+         # create the invoice in Dinero
          {:ok, _response} <-
            @dinero_api.create_invoice(
              invoice_with_business.business.dinero_id,
              access_token,
-             Invoice.to_dinero_invoice(invoice, contact |> Map.get("ContactGuid") || contact |> Map.get("contactGuid"))
+             Invoice.to_dinero_invoice(
+               webhook_data,
+               contact |> Map.get("ContactGuid") || contact |> Map.get("contactGuid")
+             )
            ) do
       json(conn, %{"message" => "Ok"})
     else
