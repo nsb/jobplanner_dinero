@@ -50,7 +50,7 @@ release :jobplanner_dinero do
   set version: current_version(:jobplanner_dinero)
   set applications: [
     :runtime_tools
-  ],
+  ]
   set commands: [
     "migrate": "rel/commands/migrate.sh"
   ]
