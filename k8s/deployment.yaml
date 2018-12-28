@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
         - name: myjobplanner-dinero
-          image: gcr.io/myjobplanner-1520708021669/jobplanner_dinero:v1
+          image: gcr.io/myjobplanner-1520708021669/myjobplanner-dinero:8ee6b976-9f4d-47d1-bf6b-de2ed94dd388
           ports:
             - containerPort: 80
           # args: ["foreground"]
