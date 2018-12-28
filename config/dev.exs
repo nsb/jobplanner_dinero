@@ -52,16 +52,3 @@ config :logger, :console, format: "[$level] $message\n"
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.
 config :phoenix, :stacktrace_depth, 20
-
-# Configure your database
-config :jobplanner_dinero, JobplannerDinero.Repo,
-  username: "postgres",
-  password: "",
-  database: "jobplanner_dinero_dev",
-  hostname: "db",
-  pool_size: 10
-
-config :jobplanner_dinero, Jobplanner,
-  client_id: System.get_env("JOBPLANNER_CLIENT_ID"),
-  client_secret: System.get_env("JOBPLANNER_CLIENT_SECRET"),
-  redirect_uri: System.get_env("JOBPLANNER_REDIRECT_URI")

@@ -27,9 +27,22 @@ config :oauth2, debug: true
 
 config :phoenix, :json_library, Jason
 
+# Configure your database
+config :jobplanner_dinero, JobplannerDinero.Repo,
+  username: System.get_env("DB_USERNAME") || "postgres",
+  password: System.get_env("DB_PASSWORD") || "",
+  database: System.get_env("DB_NAME") || "jobplanner_dinero_dev",
+  hostname: System.get_env("DB_HOST") || "db",
+  pool_size: 10
+
 config :ex_cldr,
    default_locale: "en",
    locales: ["en", "da"]
+
+config :jobplanner_dinero, Jobplanner,
+  client_id: System.get_env("JOBPLANNER_CLIENT_ID"),
+  client_secret: System.get_env("JOBPLANNER_CLIENT_SECRET"),
+  redirect_uri: System.get_env("JOBPLANNER_REDIRECT_URI")
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
