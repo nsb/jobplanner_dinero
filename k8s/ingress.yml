@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: myjobplanner-dinero
+  labels:
+    last_updated: 1
+spec:
+  rules:
+  - host: dinero.myjobplanner.com
+    http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: myjobplanner-dinero
+          servicePort: 80

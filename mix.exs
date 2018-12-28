@@ -49,7 +49,8 @@ defmodule JobplannerDinero.Mixfile do
       {:httpoison, "~> 1.4"},
       {:mox, "~> 0.4"},
       {:nimble_parsec, "~> 0.4.0"},
-      {:ex_cldr_dates_times, "~> 1.4.0"}
+      {:ex_cldr_dates_times, "~> 1.4.0"},
+      {:distillery, "~> 2.0"}
     ]
   end
 

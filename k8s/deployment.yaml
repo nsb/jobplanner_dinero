@@ -1,0 +1,30 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: myjobplanner-dinero
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: myjobplanner-dinero
+    spec:
+      containers:
+        - name: myjobplanner-dinero
+          image: gcr.io/myjobplanner-1520708021669/jobplanner_dinero:v1
+          ports:
+            - containerPort: 80
+          # args: ["foreground"]
+          env:
+            - name: HOST
+              value: "dinero.myjobplanner.com"
+            - name: SECRET_KEY_BASE
+              value: "highlysecretkey"
+            - name: DB_USERNAME
+              value: "postgres"
+            - name: DB_PASSWORD
+              value: "postgres"
+            - name: DB_NAME
+              value: "myapp_dev"
+            - name: DB_HOSTNAME
+              value: "10.0.2.2"

@@ -1,15 +1,23 @@
-# Elixir + Phoenix
-
-FROM elixir:1.7.3
-
-# Install debian packages
-RUN apt-get update
-RUN apt-get install --yes build-essential inotify-tools postgresql-client
-
-# Install Phoenix packages
-RUN mix local.hex --force
-RUN mix local.rebar --force
-RUN mix archive.install --force https://github.com/phoenixframework/archives/raw/master/phx_new.ez
-
-WORKDIR /app
-EXPOSE 4000
+FROM elixir:alpine
+ARG APP_NAME=jobplanner_dinero
+ARG PHOENIX_SUBDIR=.
+ENV MIX_ENV=prod REPLACE_OS_VARS=true TERM=xterm
+WORKDIR /opt/app
+RUN apk update \
+    && mix local.rebar --force \
+    && mix local.hex --force
+COPY mix.exs mix.lock ./
+RUN mix do deps.get, deps.compile
+COPY . .
+RUN mix compile
+RUN mix phx.digest
+RUN mix release --env=prod --verbose \
+    && mv _build/prod/rel/${APP_NAME} /opt/release \
+    && mv /opt/release/bin/${APP_NAME} /opt/release/bin/start_server
+FROM alpine:latest
+RUN apk update && apk --no-cache --update add bash openssl-dev
+ENV PORT=8080 MIX_ENV=prod REPLACE_OS_VARS=true
+WORKDIR /opt/app
+EXPOSE ${PORT}
+COPY --from=0 /opt/release .
+CMD ["/opt/app/bin/start_server", "foreground"]

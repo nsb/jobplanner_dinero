@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: myjobplanner-dinero
+spec:
+  selector:
+    app: myjobplanner-dinero
+  type: NodePort
+  ports:
+  - protocol: TCP
+    nodePort: 32131
+    port: 80
+    targetPort: 8080
