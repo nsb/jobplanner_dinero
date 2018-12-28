@@ -9,7 +9,7 @@ steps:
   - set
   - image
   - deployment
-  - myjobplanner-dinero
+  - myjobplanner-cluster
   - myjobplanner-dinero=gcr.io/$PROJECT_ID/myjobplanner-dinero:$BUILD_ID
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=europe-west3-c'
