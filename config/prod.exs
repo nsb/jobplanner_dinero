@@ -64,7 +64,7 @@ config :jobplanner_dinero, JobplannerDinero.Repo,
   username: System.get_env("DB_USERNAME") || "postgres",
   password: System.get_env("DB_PASSWORD") || "postgres",
   database: System.get_env("DB_NAME") || "jobplanner_dinero_prod",
-  hostname: System.get_env("DB_HOST") || "10.7.224.5",
+  hostname: System.get_env("DB_HOST") || "10.7.224.7",
   pool_size: 10
 
 # Finally import the config/prod.secret.exs
