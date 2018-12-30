@@ -5,11 +5,6 @@ metadata:
   labels:
     app: myjobplanner-dinero
 spec:
-  rules:
-  - host: dinero.myjobplanner.com
-    http:
-      paths:
-      - path: /*
-        backend:
-          serviceName: myjobplanner-dinero-service
-          servicePort: 80
+  backend:
+    serviceName: myjobplanner-dinero-service
+    servicePort: 80
