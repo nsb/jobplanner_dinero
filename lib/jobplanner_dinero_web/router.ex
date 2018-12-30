@@ -17,7 +17,7 @@ defmodule JobplannerDineroWeb.Router do
   scope "/", JobplannerDineroWeb do
     pipe_through :browser # Use the default browser stack
 
-    get "/", BusinessController, :index
+    get "/", HealthController, :index
     get "/business/:id", BusinessController, :show
     put "/business/:id", BusinessController, :update
     get "/business/:id/edit", BusinessController, :edit
