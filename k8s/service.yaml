@@ -1,7 +1,9 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: myjobplanner-dinero
+  name: myjobplanner-dinero-service
+  labels:
+    app: myjobplanner-dinero
 spec:
   selector:
     app: myjobplanner-dinero

@@ -2,6 +2,8 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: myjobplanner-dinero
+  labels:
+    app: myjobplanner-dinero
 spec:
   rules:
   - host: dinero.myjobplanner.com
@@ -9,5 +11,5 @@ spec:
       paths:
       - path: /*
         backend:
-          serviceName: myjobplanner-dinero
+          serviceName: myjobplanner-dinero-service
           servicePort: 80

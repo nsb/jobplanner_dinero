@@ -2,8 +2,13 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: myjobplanner-dinero
+  labels:
+    app: myjobplanner-dinero
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: myjobplanner-dinero
   template:
     metadata:
       labels:
@@ -11,9 +16,9 @@ spec:
     spec:
       containers:
         - name: myjobplanner-dinero
-          image: gcr.io/myjobplanner-1520708021669/myjobplanner-dinero:8ee6b976-9f4d-47d1-bf6b-de2ed94dd388
+          image: gcr.io/myjobplanner-1520708021669/myjobplanner-dinero:e97cd54c-44b5-4320-926e-5d3e84003afd
           ports:
-            - containerPort: 80
+            - containerPort: 8080
           # args: ["foreground"]
           env:
             - name: HOST
