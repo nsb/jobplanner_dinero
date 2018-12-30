@@ -40,4 +40,11 @@ defmodule JobplannerDineroWeb.Router do
 
     post "/invoice", InvoiceController, :create
   end
+
+  scope "/health", JobplannerDineroWeb do
+    pipe_through :browser
+
+    get("/liveness", HealthController, :index)
+    get("/readiness", HealthController, :index)
+  end
 end

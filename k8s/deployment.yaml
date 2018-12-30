@@ -20,7 +20,19 @@ spec:
           ports:
             - containerPort: 4000
               name: http
-          # args: ["foreground"]
+          livenessPrope:
+            httpGet:
+              path: /health/liveness
+              port: 4000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 2
+          readinessPrope:
+            httpGet:
+              path: /health/readiness
+              port: 4000
+            initialDelaySeconds: 5
+            periodSeconds: 10
           env:
             - name: HOST
               value: "dinero.myjobplanner.com"
