@@ -44,8 +44,7 @@ config :jobplanner_dinero, JobplannerDineroWeb.Endpoint,
       ~r{lib/jobplanner_dinero_web/views/.*(ex)$},
       ~r{lib/jobplanner_dinero_web/templates/.*(eex)$}
     ]
-  ],
-  http: [port: System.get_env("PORT") || 4000]
+  ]
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"

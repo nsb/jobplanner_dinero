@@ -24,6 +24,8 @@ spec:
           env:
             - name: HOST
               value: "dinero.myjobplanner.com"
+            - name: PORT
+              value: "4000"
             - name: SECRET_KEY_BASE
               value: "highlysecretkey"
             - name: DB_USERNAME
