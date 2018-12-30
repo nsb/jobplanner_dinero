@@ -16,18 +16,17 @@ spec:
     spec:
       containers:
         - name: myjobplanner-dinero
-          image: gcr.io/myjobplanner-1520708021669/myjobplanner-dinero:1a389d8e-7e37-402e-a1af-96b21f5893ca
+          image: gcr.io/myjobplanner-1520708021669/myjobplanner-dinero:645172d7-c9aa-45ba-991e-188e668955a6
           ports:
             - containerPort: 4000
-              name: http
-          livenessPrope:
+          livenessProbe:
             httpGet:
               path: /health/liveness
               port: 4000
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 2
-          readinessPrope:
+          readinessProbe:
             httpGet:
               path: /health/readiness
               port: 4000
