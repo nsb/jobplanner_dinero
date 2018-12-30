@@ -12,12 +12,11 @@ COPY . .
 RUN mix compile
 RUN mix phx.digest
 RUN mix release --env=prod --verbose \
-    && mv _build/prod/rel/${APP_NAME} /opt/release \
-    && mv /opt/release/bin/${APP_NAME} /opt/release/bin/start_server
+    && mv _build/prod/rel/${APP_NAME} /opt/release
 FROM alpine:latest
 RUN apk update && apk --no-cache --update add bash openssl-dev
 ENV PORT=8080 MIX_ENV=prod REPLACE_OS_VARS=true
 WORKDIR /opt/app
 EXPOSE ${PORT}
 COPY --from=0 /opt/release .
-CMD ["/opt/app/bin/start_server", "foreground"]
+CMD ["/opt/app/bin/jobplanner_dinero", "foreground"]

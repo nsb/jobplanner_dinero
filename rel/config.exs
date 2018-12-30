@@ -37,6 +37,7 @@ end
 environment :prod do
   set include_erts: true
   set include_src: false
+  set post_start_hooks: "rel/hooks/post_start"
   set cookie: :"tli_<!;p4Z}l%wp359F63yl6vbQ8W6UF$l0|I_1BMq>.1ZnJ3_^.]mp|pZ}am$lK"
   set vm_args: "rel/vm.args"
 end
@@ -50,9 +51,6 @@ release :jobplanner_dinero do
   set version: current_version(:jobplanner_dinero)
   set applications: [
     :runtime_tools
-  ]
-  set commands: [
-    "migrate": "rel/commands/migrate.sh"
   ]
 end
 
