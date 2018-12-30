@@ -16,9 +16,10 @@ spec:
     spec:
       containers:
         - name: myjobplanner-dinero
-          image: gcr.io/myjobplanner-1520708021669/myjobplanner-dinero:e97cd54c-44b5-4320-926e-5d3e84003afd
+          image: gcr.io/myjobplanner-1520708021669/myjobplanner-dinero:d7ca5b20-2513-4fc4-bcd9-e288efa51fed
           ports:
             - containerPort: 4000
+              name: http
           # args: ["foreground"]
           env:
             - name: HOST
@@ -30,6 +31,6 @@ spec:
             - name: DB_PASSWORD
               value: "postgres"
             - name: DB_NAME
-              value: "myapp_dev"
-            - name: DB_HOSTNAME
-              value: "10.0.2.2"
+              value: "jobplanner_dinero_prod"
+            - name: DB_HOST
+              value: "10.7.224.5"
