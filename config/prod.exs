@@ -71,4 +71,4 @@ config :jobplanner_dinero, JobplannerDinero.Repo,
 
 # Finally import the config/prod.secret.exs
 # which should be versioned separately.
-l# import_config "prod.secret.exs"
+# import_config "prod.secret.exs"
