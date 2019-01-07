@@ -33,8 +33,7 @@ config :logger, level: :info
 #     config :jobplanner_dinero, JobplannerDineroWeb.Endpoint,
 #       ...
 #       url: [scheme: "https", host: "example.com", port: 443],
-#     System.get_env("PORT")]t
-force_ssl: [rewrite_on: [:x_forwarded_proto]],tps: [:inet6,
+#       https: [:inet6,
 #               port: 443,
 #               keyfile: System.get_env("SOME_APP_SSL_KEY_PATH"),
 #               certfile: System.get_env("SOME_APP_SSL_CERT_PATH")]
@@ -72,4 +71,4 @@ config :jobplanner_dinero, JobplannerDinero.Repo,
 
 # Finally import the config/prod.secret.exs
 # which should be versioned separately.
-# import_config "prod.secret.exs"
+l# import_config "prod.secret.exs"
