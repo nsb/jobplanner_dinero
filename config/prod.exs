@@ -66,7 +66,7 @@ config :logger, level: :info
 # Configure your database
 config :jobplanner_dinero, JobplannerDinero.Repo,
   url: System.get_env("DATBASE_URL"),
-  pool_size: String.to_integer(System.get_env("POOL_SIZE")) || "10"),
+  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   ssl: true
 
 # Finally import the config/prod.secret.exs
