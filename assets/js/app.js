@@ -1,3 +1,4 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
 import css from '../css/app.css';
 
 // Brunch automatically concatenates all files in your
