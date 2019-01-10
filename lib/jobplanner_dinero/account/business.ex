@@ -66,7 +66,7 @@ defmodule JobplannerDinero.Account.Business do
   def create_invoice_webhook(client, business) do
     body = %{
       "business" => business.jobplanner_id,
-      "target" => "https://api.myjobplanner.com/v1/hooks/",
+      "target" => "https://dinero.myjobplanner.com/webhooks/invoice",
       "event" => "invoice.added",
       "is_active" => true
     }
