@@ -1,6 +1,7 @@
 defmodule JobplannerDineroWeb.InvoiceController do
   use JobplannerDineroWeb, :controller
   import Plug.Conn
+  require Logger
 
   alias JobplannerDinero.Repo
   alias JobplannerDinero.Invoice
@@ -47,6 +48,7 @@ defmodule JobplannerDineroWeb.InvoiceController do
       json(conn, %{"message" => "Ok"})
     else
       {_, err} ->
+        Logger.info err
         conn
         |> put_status(400)
         |> json(err)
