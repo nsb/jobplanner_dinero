@@ -2,12 +2,13 @@ defmodule JobplannerDinero.Invoice do
   use Ecto.Schema
   import Ecto.Changeset
   alias JobplannerDinero.Repo
+  alias JobplannerDinero.Account.Business
   alias JobplannerDinero.Invoice
 
   schema "invoices" do
-    field :dinero_id, :string
-    field :invoice, :map
-    belongs_to :business, JobplannerDinero.Account.Business
+    field(:dinero_id, :string)
+    field(:invoice, :map)
+    belongs_to(:business, JobplannerDinero.Account.Business)
 
     timestamps()
   end
@@ -19,25 +20,33 @@ defmodule JobplannerDinero.Invoice do
     |> foreign_key_constraint(:business)
   end
 
-  def create_invoice(attrs \\ %{}) do
-    %Invoice{business_id: attrs["business"], invoice: attrs}
-    |> Ecto.Changeset.change()
-    |> Repo.insert()
+  def create_invoice(%{"business" => business_id} = attrs) do
+    case Repo.get_by(Business, jobplanner_id: business_id) do
+      nil ->
+        {:error, "Business not found"}
+
+      business ->
+        %Invoice{business_id: business.id, invoice: attrs}
+        |> Ecto.Changeset.change()
+        |> Repo.insert()
+    end
   end
 
   def to_dinero_invoice(%Invoice{invoice: invoice}, contact_id) do
     %Dinero.DineroInvoice{
       ContactGuid: contact_id,
       Date: Date.utc_today(),
-      ProductLines: Enum.flat_map(invoice["visits"], fn visit ->
-        Enum.map(visit["line_items"], fn line_item ->
-          date =
-            case DateTime.from_iso8601(visit["begins"]) do
-              {:ok, dt, _} -> Cldr.Date.to_string!(dt, locale: "da")
-            end
-          %{ line_item_to_product_line(line_item) | Comments: date }
+      ProductLines:
+        Enum.flat_map(invoice["visits"], fn visit ->
+          Enum.map(visit["line_items"], fn line_item ->
+            date =
+              case DateTime.from_iso8601(visit["begins"]) do
+                {:ok, dt, _} -> Cldr.Date.to_string!(dt, locale: "da")
+              end
+
+            %{line_item_to_product_line(line_item) | Comments: date}
+          end)
         end)
-      end)
     }
   end
 

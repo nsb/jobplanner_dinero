@@ -17,7 +17,7 @@ defmodule JobplannerDineroWeb.InvoiceControllerTest do
       "data" => %{
         "id" => 1,
         "created" => "2018-11-24T15:41:41.178860Z",
-        "business" => business.id,
+        "business" => business.jobplanner_id,
         "client" => %{
           "id" => 1363,
           "business" => 1,
