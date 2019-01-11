@@ -48,7 +48,10 @@ defmodule JobplannerDineroWeb.InvoiceController do
       json(conn, %{"message" => "Ok"})
     else
       {_, err} ->
-        Logger.info err
+        case err do
+          %{"message" => message} -> Logger.warn(message)
+        end
+
         conn
         |> put_status(400)
         |> json(err)
