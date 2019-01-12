@@ -84,7 +84,7 @@ defmodule JobplannerDineroWeb.AuthController do
       OAuth2.Client.get!(client, "https://api.myjobplanner.com/v1/businesses/")
 
     Enum.map(businesses, fn business ->
-      %Business{
+      %{
         jobplanner_id: business["id"],
         name: business["name"],
         email: business["email"]

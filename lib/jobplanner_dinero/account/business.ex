@@ -40,8 +40,8 @@ defmodule JobplannerDinero.Account.Business do
     |> validate_format(:email, ~r/@/)
   end
 
-  def upsert_by(%Business{} = record_struct, selector) do
-    case Business |> Repo.get_by(%{selector => record_struct |> Map.get(selector)}) do
+  def upsert_by(changes, selector) do
+    case Business |> Repo.get_by(%{selector => changes |> Map.get(selector)}) do
       # build new business struct
       nil ->
         %Business{}
@@ -50,12 +50,12 @@ defmodule JobplannerDinero.Account.Business do
       business ->
         business
     end
-    |> Business.changeset(record_struct |> Map.from_struct())
+    |> Business.changeset(changes)
     |> Repo.insert_or_update()
   end
 
-  def upsert_by!(%Business{} = record_struct, selector) do
-    {:ok, business} = upsert_by(record_struct, selector)
+  def upsert_by!(changes, selector) do
+    {:ok, business} = upsert_by(changes, selector)
     business
   end
 
