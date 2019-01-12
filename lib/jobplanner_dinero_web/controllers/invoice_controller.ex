@@ -96,12 +96,7 @@ defmodule JobplannerDineroWeb.InvoiceController do
       ZipCode: property["zip_code"],
       City: property["city"],
       # TODO FIXME
-      CountryKey:
-        if String.length(property["country"]) > 0 do
-          String.upcase(property["country"])
-        else
-          "DK"
-        end,
+      CountryKey: "DK",
       Email: client["email"],
       # TODO FIXME
       isPerson: true
