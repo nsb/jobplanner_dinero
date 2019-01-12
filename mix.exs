@@ -21,7 +21,7 @@ defmodule JobplannerDinero.Mixfile do
   def application do
     [
       mod: {JobplannerDinero.Application, []},
-      extra_applications: [:logger, :runtime_tools, :oauth2]
+      extra_applications: [:logger, :runtime_tools, :oauth2, :timex]
     ]
   end
 
@@ -50,7 +50,8 @@ defmodule JobplannerDinero.Mixfile do
       {:mox, "~> 0.4"},
       {:nimble_parsec, "~> 0.4.0"},
       {:ex_cldr_dates_times, "~> 1.4.0"},
-      {:distillery, "~> 2.0"}
+      {:distillery, "~> 2.0"},
+      {:timex, "~> 3.4.2"}
     ]
   end
 

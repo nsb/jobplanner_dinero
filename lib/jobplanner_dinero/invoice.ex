@@ -1,5 +1,6 @@
 defmodule JobplannerDinero.Invoice do
   use Ecto.Schema
+  use Timex
   import Ecto.Changeset
   alias JobplannerDinero.Repo
   alias JobplannerDinero.Account.Business
@@ -41,7 +42,8 @@ defmodule JobplannerDinero.Invoice do
           Enum.map(visit["line_items"], fn line_item ->
             date =
               case DateTime.from_iso8601(visit["begins"]) do
-                {:ok, dt, _} -> Cldr.Date.to_string!(dt, locale: "da")
+                {:ok, dt, _} ->
+                  Timezone.convert(dt, "Europe/Copenhagen") |> Cldr.Date.to_string!(locale: "da")
               end
 
             %{line_item_to_product_line(line_item) | Comments: date}
