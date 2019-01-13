@@ -50,7 +50,7 @@ defmodule JobplannerDineroWeb.InvoiceController do
       json(conn, %{"message" => "Ok"})
     else
       {_, err} ->
-        Logger.warn(inspect(err))
+        Logger.error(inspect(err))
 
         conn
         |> put_status(400)
