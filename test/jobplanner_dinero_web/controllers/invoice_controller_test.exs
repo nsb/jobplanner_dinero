@@ -129,7 +129,7 @@ defmodule JobplannerDineroWeb.InvoiceControllerTest do
     end)
 
     conn = post(conn, "/webhooks/invoice", webhook_data)
-    assert json_response(conn, 200) == %{"message" => "Ok"}
+    assert %{"message" => "Ok"} = json_response(conn, 200)
   end
 
   test "CREATE /webhooks/invoice with non existing contact", %{
@@ -165,6 +165,6 @@ defmodule JobplannerDineroWeb.InvoiceControllerTest do
     end)
 
     conn = post(conn, "/webhooks/invoice", webhook_data)
-    assert json_response(conn, 200) == %{"message" => "Ok"}
+    assert %{"message" => "Ok"} = json_response(conn, 200)
   end
 end

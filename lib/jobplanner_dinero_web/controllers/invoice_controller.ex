@@ -45,9 +45,17 @@ defmodule JobplannerDineroWeb.InvoiceController do
                contact |> Map.get("ContactGuid") || contact |> Map.get("contactGuid")
              )
            ) do
-      Invoice.changeset(invoice_with_business, %{dinero_id: invoice_guid, synced: DateTime.utc_now()})
+      synced = DateTime.utc_now()
+
+      Invoice.changeset(invoice_with_business, %{dinero_id: invoice_guid, synced: synced})
       |> Repo.update()
-      json(conn, %{"message" => "Ok"})
+
+      json(conn, %{
+        "message" => "Ok",
+        "id" => invoice_with_business.id,
+        "guid" => invoice_guid,
+        "created" => synced
+      })
     else
       {_, err} ->
         Logger.error(inspect(err))
