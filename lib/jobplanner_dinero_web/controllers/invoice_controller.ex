@@ -98,6 +98,7 @@ defmodule JobplannerDineroWeb.InvoiceController do
       # TODO FIXME
       CountryKey: "DK",
       Email: client["email"],
+      Phone: client["phone"],
       # TODO FIXME
       isPerson: true
     }
