@@ -9,6 +9,7 @@ defmodule JobplannerDinero.Invoice do
   schema "invoices" do
     field(:dinero_id, :string)
     field(:invoice, :map)
+    field(:synced, :utc_datetime)
     belongs_to(:business, JobplannerDinero.Account.Business)
 
     timestamps()
@@ -16,7 +17,8 @@ defmodule JobplannerDinero.Invoice do
 
   def changeset(%Invoice{} = invoice, params) do
     invoice
-    |> cast(params, [:business, :invoice])
+    |> cast(params, [:invoice, :dinero_id, :synced])
+    |> cast_assoc(:business)
     |> validate_required([:business, :invoice])
     |> foreign_key_constraint(:business)
   end

@@ -36,7 +36,7 @@ defmodule JobplannerDineroWeb.InvoiceController do
            ),
 
          # create the invoice in Dinero
-         {:ok, _response} <-
+         {:ok, %{"Guid" => invoice_guid}} <-
            @dinero_api.create_invoice(
              invoice_with_business.business.dinero_id,
              access_token,
@@ -45,6 +45,8 @@ defmodule JobplannerDineroWeb.InvoiceController do
                contact |> Map.get("ContactGuid") || contact |> Map.get("contactGuid")
              )
            ) do
+      Invoice.changeset(invoice_with_business, %{dinero_id: invoice_guid, synced: DateTime.utc_now()})
+      |> Repo.update()
       json(conn, %{"message" => "Ok"})
     else
       {_, err} ->

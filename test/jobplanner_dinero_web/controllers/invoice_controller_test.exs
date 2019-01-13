@@ -125,7 +125,7 @@ defmodule JobplannerDineroWeb.InvoiceControllerTest do
     end)
 
     expect(Dinero.DineroApiMock, :create_invoice, fn _, _, _ ->
-      {:ok, nil}
+      {:ok, %{"Guid" => "abc"}}
     end)
 
     conn = post(conn, "/webhooks/invoice", webhook_data)
@@ -161,7 +161,7 @@ defmodule JobplannerDineroWeb.InvoiceControllerTest do
     end)
 
     expect(Dinero.DineroApiMock, :create_invoice, fn ^dinero_id, "abc", %Dinero.DineroInvoice{} ->
-      {:ok, nil}
+      {:ok, %{"Guid" => "abc"}}
     end)
 
     conn = post(conn, "/webhooks/invoice", webhook_data)
