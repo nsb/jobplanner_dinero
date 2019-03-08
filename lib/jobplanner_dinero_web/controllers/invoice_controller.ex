@@ -101,7 +101,7 @@ defmodule JobplannerDineroWeb.InvoiceController do
   defp jobplanner_client_to_dinero_contact(client, property) do
     %Dinero.DineroContact{
       ExternalReference: "myjobplanner:#{client["id"]}",
-      Name: "#{client["first_name"]} #{client["last_name"]}",
+      Name: (if client["is_business"], do: client["business_name"], else: "#{client["first_name"]} #{client["last_name"]}"),
       Street: property["address1"],
       ZipCode: property["zip_code"],
       City: property["city"],
@@ -109,8 +109,7 @@ defmodule JobplannerDineroWeb.InvoiceController do
       CountryKey: "DK",
       Email: client["email"],
       Phone: client["phone"],
-      # TODO FIXME
-      isPerson: true
+      isPerson: !client["is_business"]
     }
   end
 end
