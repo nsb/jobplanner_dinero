@@ -13,7 +13,7 @@ defmodule JobplannerDineroWeb.InvoiceController do
   def create(conn, %{"hook" => %{"event" => "invoice.added"}, "data" => data}) do
     # save invoice to database
     with {:ok,
-          %{invoice: %{"client" => _client, "property" => _property} = invoice} = webhook_data} <-
+          %{invoice: %{"client" => _client} = invoice} = webhook_data} <-
            Invoice.create_invoice(data),
 
          # load related business
@@ -69,7 +69,7 @@ defmodule JobplannerDineroWeb.InvoiceController do
   defp get_or_create_contact(
          dinero_id,
          access_token,
-         %{"client" => client, "property" => property} = _invoice
+         %{"client" => client} = _invoice
        ) do
     queries = [
       "ExternalReference eq 'myjobplanner:#{client["id"]}'",
@@ -93,18 +93,18 @@ defmodule JobplannerDineroWeb.InvoiceController do
         @dinero_api.create_contact(
           dinero_id,
           access_token,
-          jobplanner_client_to_dinero_contact(client, property)
+          jobplanner_client_to_dinero_contact(client)
         )
     end
   end
 
-  defp jobplanner_client_to_dinero_contact(client, property) do
+  defp jobplanner_client_to_dinero_contact(client) do
     %Dinero.DineroContact{
       ExternalReference: "myjobplanner:#{client["id"]}",
       Name: (if client["is_business"], do: client["business_name"], else: "#{client["first_name"]} #{client["last_name"]}"),
-      Street: (if client["address_use_property"], do: property["address1"], else: client["address1"]),
-      ZipCode: (if client["address_use_property"], do: property["zip_code"], else: client["zip_code"]),
-      City: (if client["address_use_property"], do: property["city"], else: client["city"]),
+      Street: (if client["address_use_property"], do: client["properties"][0]["address1"], else: client["address1"]),
+      ZipCode: (if client["address_use_property"], do: client["properties"][0]["zip_code"], else: client["zip_code"]),
+      City: (if client["address_use_property"], do: client["properties"][0]["city"], else: client["city"]),
       # TODO FIXME
       CountryKey: "DK",
       Email: client["email"],

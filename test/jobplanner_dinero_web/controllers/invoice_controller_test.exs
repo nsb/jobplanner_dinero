@@ -66,14 +66,6 @@ defmodule JobplannerDineroWeb.InvoiceControllerTest do
             ]
           }
         ],
-        "property" => %{
-          "id" => 1,
-          "address1" => "White House",
-          "address2" => "",
-          "city" => "Washington",
-          "zip_code" => "1342",
-          "country" => ""
-        },
         "paid" => false
       }
     }
