@@ -102,9 +102,9 @@ defmodule JobplannerDineroWeb.InvoiceController do
     %Dinero.DineroContact{
       ExternalReference: "myjobplanner:#{client["id"]}",
       Name: (if client["is_business"], do: client["business_name"], else: "#{client["first_name"]} #{client["last_name"]}"),
-      Street: (if client["address_use_property"], do: client["properties"][0]["address1"], else: client["address1"]),
-      ZipCode: (if client["address_use_property"], do: client["properties"][0]["zip_code"], else: client["zip_code"]),
-      City: (if client["address_use_property"], do: client["properties"][0]["city"], else: client["city"]),
+      Street: (if client["address_use_property"], do: List.first(client["properties"])["address1"], else: client["address1"]),
+      ZipCode: (if client["address_use_property"], do: List.first(client["properties"])["zip_code"], else: client["zip_code"]),
+      City: (if client["address_use_property"], do: List.first(client["properties"])["city"], else: client["city"]),
       # TODO FIXME
       CountryKey: "DK",
       Email: client["email"],
