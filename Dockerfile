@@ -1,4 +1,4 @@
-FROM elixir:alpine
+FROM elixir:1.9.1-alpine
 ARG APP_NAME=jobplanner_dinero
 ARG PHOENIX_SUBDIR=.
 ENV MIX_ENV=prod REPLACE_OS_VARS=true TERM=xterm

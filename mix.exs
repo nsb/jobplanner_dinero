@@ -5,7 +5,7 @@ defmodule JobplannerDinero.Mixfile do
     [
       app: :jobplanner_dinero,
       version: "0.0.1",
-      elixir: "~> 1.7.3",
+      elixir: "~> 1.9.1",
       elixirc_paths: elixirc_paths(Mix.env),
       elixirc_options: [warnings_as_errors: true],
       compilers: [:phoenix, :gettext] ++ Mix.compilers  ++ [:cldr],
