@@ -51,7 +51,8 @@ defmodule JobplannerDinero.Mixfile do
       {:nimble_parsec, "~> 0.4.0"},
       {:ex_cldr_dates_times, "~> 1.4.0"},
       {:distillery, "~> 2.0"},
-      {:timex, "~> 3.4.2"}
+      {:timex, "~> 3.4.2"},
+      {:ex_dinero, "~> 0.1.0"}
     ]
   end
 
