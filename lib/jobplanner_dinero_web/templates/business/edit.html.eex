@@ -1,18 +1,17 @@
-<h2>Edit business: <%= @business.name %></h2>
+<h2>Rediger firma: <%= @business.name %></h2>
 
 <%= form_for @changeset, Routes.business_path(@conn, :update, @business), fn f -> %>
-  <div>
-    <%= label f, :dinero_api_key %>
-    <%= text_input f, :dinero_api_key %>
+  <div class="form-group">
+    <%= label f, :dinero_api_key, "Dinero API nøgle" %>
+    <%= text_input f, :dinero_api_key, class: "form-control" %>
     <%= error_tag f, :dinero_api_key %>
   </div>
-  <div>
-    <%= label f, :dinero_id %>
-    <%= text_input f, :dinero_id %>
+  <div class="form-group">
+    <%= label f, :dinero_id, "Dinero ID" %>
+    <%= text_input f, :dinero_id, class: "form-control" %>
     <%= error_tag f, :dinero_id %>
   </div>
   <div>
-    <%= submit "Submit" %>
+    <%= submit "Gem" %>
   </div>
-
 <% end %>

@@ -16,7 +16,7 @@
       <header class="header">
         <nav role="navigation">
           <ul class="nav nav-pills pull-right">
-            <li>Welcome, <%= @current_user.username %></li>
+            <li>Velkommen, <%= @current_user.username %></li>
           </ul>
         </nav>
         <span class="logo"></span>
