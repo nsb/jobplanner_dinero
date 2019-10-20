@@ -75,16 +75,9 @@ defmodule JobplannerDineroWeb.BusinessController do
       {:ok, business} ->
         # Start importing Dinero contacts to myJobPlanner
         Task.Supervisor.start_child(
-          JobplannerDinero.SyncContactsToMyJobPlannerSupervisor,
+          JobplannerDinero.SyncAllContactsToMyJobPlannerSupervisor,
           fn ->
-            import_dinero_contacts_to_myjobplanner(
-              conn.assigns.current_user,
-              business
-              # business.dinero_id,
-              # business.dinero_api_key,
-              # business.jobplanner_id,
-              # conn.assigns.current_user.jobplanner_access_token
-            )
+            import_dinero_contacts_to_myjobplanner(conn.assigns.current_user, business)
           end,
           restart: :transient
         )
@@ -126,9 +119,7 @@ defmodule JobplannerDineroWeb.BusinessController do
     contact_fields =
       "Name,ContactGuid,ExternalReference,IsPerson,Street,ZipCode,City,CountryKey,Phone,Email,Webpage,AttPerson,VatNumber,EanNumber,PaymentConditionType,PaymentConditionNumberOfDays,IsMember,MemberNumber,CreatedAt,UpdatedAt,DeletedAt"
 
-    Logger.info(
-      "Starting import of dinero contacts to myJobPlanner for #{business.name}..."
-    )
+    Logger.info("Starting import of dinero contacts to myJobPlanner for #{business.name}...")
 
     client =
       JobplannerOAuth2.client(user.jobplanner_access_token)
@@ -142,49 +133,53 @@ defmodule JobplannerDineroWeb.BusinessController do
            ),
          {:ok, %{"Collection" => contacts}} <-
            @dinero_api.get_contacts(business.dinero_id, access_token, fields: contact_fields) do
-      Logger.info(
-        "Importing #{length(contacts)} contacts from dinero to #{
-          business.name
-        }..."
-      )
+      Logger.info("Importing #{length(contacts)} contacts from dinero to #{business.name}...")
 
       Enum.each(contacts, fn contact ->
         [first_name, last_name] = String.split(contact["Name"], " ", parts: 2, trim: true)
 
-        body = %{
-          "business" => business.jobplanner_id,
-          "first_name" => first_name,
-          "last_name" => last_name,
-          "address1" => contact["Street"],
-          "city" => contact["City"],
-          "zip_code" => contact["ZipCode"],
-          "country" => contact["CountryKey"],
-          "address_use_property" => true,
-          "email" => contact["Email"],
-          "phone" => contact["Phone"],
-          "properties" => [
-            %{
+        Task.Supervisor.start_child(
+          JobplannerDinero.SyncOneContactToMyJobPlannerSupervisor,
+          fn ->
+            body = %{
+              "business" => business.jobplanner_id,
+              "first_name" => first_name,
+              "last_name" => last_name,
               "address1" => contact["Street"],
               "city" => contact["City"],
               "zip_code" => contact["ZipCode"],
-              "country" => contact["CountryKey"]
+              "country" => contact["CountryKey"],
+              "address_use_property" => true,
+              "email" => contact["Email"],
+              "phone" => contact["Phone"],
+              "properties" => [
+                %{
+                  "address1" => contact["Street"],
+                  "city" => contact["City"],
+                  "zip_code" => contact["ZipCode"],
+                  "country" => contact["CountryKey"]
+                }
+              ],
+              "upcoming_visit_reminder_email_enabled" => true,
+              "external_id" => contact["ContactGuid"],
+              "imported_from" => "dinero",
+              "imported_via" => "myJobPlanner Dinero integration",
+              "is_business" => not contact["IsPerson"],
+              "business_name" => "string"
             }
-          ],
-          "upcoming_visit_reminder_email_enabled" => true,
-          "external_id" => contact["ContactGuid"],
-          "imported_from" => "dinero",
-          "imported_via" => "myJobPlanner Dinero integration",
-          "is_business" => not contact["IsPerson"],
-          "business_name" => "string"
-        }
 
-        case OAuth2.Client.post(client, "https://api.myjobplanner.com/v1/clients/", body) do
-          {:ok, response} ->
-            Logger.info("Successfully import contact #{contact["Name"]} with id #{response.body["id"]}")
+            case OAuth2.Client.post(client, "https://api.myjobplanner.com/v1/clients/", body) do
+              {:ok, response} ->
+                Logger.info(
+                  "Successfully import contact #{contact["Name"]} with id #{response.body["id"]}"
+                )
 
-          {:error, error} ->
-            {:error, error}
-        end
+              {:error, error} ->
+                {:error, error}
+            end
+          end,
+          restart: :transient
+        )
       end)
     else
       {:error, error} ->
