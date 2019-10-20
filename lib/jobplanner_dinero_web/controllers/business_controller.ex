@@ -180,7 +180,7 @@ defmodule JobplannerDineroWeb.BusinessController do
 
         case OAuth2.Client.post(client, "https://api.myjobplanner.com/v1/clients/", body) do
           {:ok, response} ->
-            response
+            Logger.info("Successfully import contact #{contact["Name"]} with id #{response.body["id"]}")
 
           {:error, error} ->
             {:error, error}
