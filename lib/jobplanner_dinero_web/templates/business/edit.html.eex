@@ -1,4 +1,12 @@
-<h2>Rediger firma: <%= @business.name %></h2>
+<h2><%= @business.name %></h2>
+<p>
+  Her skal du angive din Dinero API nøgle og Dinero ID.
+   <ul>
+    <li><a href="https://dinero.dk/support/saadan-opretter-du-en-api-noegle/" target="_blank">Læs mere om hvordan du opretter en Dinero API nøgle.</a></li>
+    <li><a href="https://dinero.dk/support/firma-id/" target="_blank">Sådan finder du dit Dinero ID.</a></li>
+  </ul>
+</p>
+
 
 <%= form_for @changeset, Routes.business_path(@conn, :update, @business), fn f -> %>
   <div class="form-group">
