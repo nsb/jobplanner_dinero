@@ -1,5 +1,6 @@
 defmodule JobplannerDineroWeb.BusinessController do
   use JobplannerDineroWeb, :controller
+  require Logger
   alias JobplannerDinero.Repo
   alias JobplannerDineroWeb.JobplannerOAuth2
   alias JobplannerDinero.Auth.Authorizer
@@ -77,10 +78,12 @@ defmodule JobplannerDineroWeb.BusinessController do
           JobplannerDinero.SyncContactsToMyJobPlannerSupervisor,
           fn ->
             import_dinero_contacts_to_myjobplanner(
-              business.dinero_id,
-              business.dinero_api_key,
-              business.jobplanner_id,
-              conn.assigns.current_user.jobplanner_access_token
+              conn.assigns.current_user,
+              business
+              # business.dinero_id,
+              # business.dinero_api_key,
+              # business.jobplanner_id,
+              # conn.assigns.current_user.jobplanner_access_token
             )
           end,
           restart: :transient
@@ -119,32 +122,37 @@ defmodule JobplannerDineroWeb.BusinessController do
     end
   end
 
-  def import_dinero_contacts_to_myjobplanner(
-        dinero_id,
-        dinero_api_key,
-        jobplanner_business_id,
-        jobplanner_access_token
-      ) do
+  defp import_dinero_contacts_to_myjobplanner(user, business) do
     contact_fields =
       "Name,ContactGuid,ExternalReference,IsPerson,Street,ZipCode,City,CountryKey,Phone,Email,Webpage,AttPerson,VatNumber,EanNumber,PaymentConditionType,PaymentConditionNumberOfDays,IsMember,MemberNumber,CreatedAt,UpdatedAt,DeletedAt"
 
+    Logger.info(
+      "Starting import of dinero contacts to myJobPlanner for #{business.name}..."
+    )
+
     client =
-      JobplannerOAuth2.client(jobplanner_access_token)
+      JobplannerOAuth2.client(user.jobplanner_access_token)
       |> OAuth2.Client.put_header("Content-Type", "application/json")
 
     with {:ok, %{"access_token" => access_token}} <-
            @dinero_api.authentication(
              @dinero_client_id,
              @dinero_client_secret,
-             dinero_api_key
+             business.dinero_api_key
            ),
          {:ok, %{"Collection" => contacts}} <-
-           @dinero_api.get_contacts(dinero_id, access_token, fields: contact_fields) do
+           @dinero_api.get_contacts(business.dinero_id, access_token, fields: contact_fields) do
+      Logger.info(
+        "Importing #{length(contacts)} contacts from dinero to #{
+          business.name
+        }..."
+      )
+
       Enum.each(contacts, fn contact ->
         [first_name, last_name] = String.split(contact["Name"], " ", parts: 2, trim: true)
 
         body = %{
-          "business" => jobplanner_business_id,
+          "business" => business.jobplanner_id,
           "first_name" => first_name,
           "last_name" => last_name,
           "address1" => contact["Street"],
