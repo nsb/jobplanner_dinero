@@ -20,6 +20,6 @@
     <%= error_tag f, :dinero_id %>
   </div>
   <div>
-    <%= submit "Gem" %>
+    <%= submit "Gem", class: "btn btn-primary" %>
   </div>
 <% end %>

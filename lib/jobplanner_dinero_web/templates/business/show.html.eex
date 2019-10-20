@@ -1,19 +1,21 @@
 <h2><%= @business.name %></h2>
 
 <div>
-  <%= link "Edit", to: Routes.business_path(@conn, :edit, @business.id) %>
+  <%= link "Rediger indstillinger", to: Routes.business_path(@conn, :edit, @business.id) %>
 </div>
 <div>
   <%= if @business.is_active do %>
     <%= form_for @changeset, Routes.business_path(@conn, :deactivate, @business), fn _ -> %>
       <div>
-        <%= submit "Deactivate" %>
+        <h5>Dinero integration er aktiv.</h5>
+        <%= submit "Deaktiver Dinero Integration", class: "btn btn-warning" %>
       </div>
     <% end %>
   <% else %>
     <%= form_for @changeset, Routes.business_path(@conn, :activate, @business), fn _ -> %>
       <div>
-        <%= submit "Activate" %>
+        <h5>Dinero integration er ikke aktiv.</h5>
+        <%= submit "Aktiver Dinero Integration", class: "btn btn-primary" %>
       </div>
     <% end %>
   <% end %>

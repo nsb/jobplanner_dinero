@@ -47,7 +47,7 @@ defmodule JobplannerDineroWeb.BusinessController do
     |> case do
       {:ok, business} ->
         conn
-        |> put_flash(:info, "Business updated sucessfully.")
+        |> put_flash(:info, "Opdateret successfuldt")
         |> redirect(to: Routes.business_path(conn, :show, business))
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -67,13 +67,13 @@ defmodule JobplannerDineroWeb.BusinessController do
          |> Business.create_invoice_webhook(business) do
       {:ok, business} ->
         conn
-        |> put_flash(:info, "Activated Dinero integration successfully")
+        |> put_flash(:info, "Aktiverede Dinero integration successfuldt")
         |> redirect(to: Routes.business_path(conn, :show, business))
         |> halt()
 
       {:error, _} ->
         conn
-        |> put_flash(:error, "Could not activate webhook")
+        |> put_flash(:error, "Kunne ikke aktivere webhook")
         |> redirect(to: Routes.business_path(conn, :show, business))
         |> halt()
     end
@@ -87,13 +87,13 @@ defmodule JobplannerDineroWeb.BusinessController do
     case Business.delete_invoice_webhook(client, business) do
       {:ok, business} ->
         conn
-        |> put_flash(:info, "Deactivated Dinero integration successfully")
+        |> put_flash(:info, "Deaktiverede Dinero integration successfuldt")
         |> redirect(to: Routes.business_path(conn, :show, business))
         |> halt()
 
       {:error, _} ->
         conn
-        |> put_flash(:error, "Could not deactivate Dinero integration")
+        |> put_flash(:error, "Kunne ikke deaktivere Dinero integration")
         |> redirect(to: Routes.business_path(conn, :show, business))
         |> halt()
     end
@@ -106,7 +106,7 @@ defmodule JobplannerDineroWeb.BusinessController do
       conn
     else
       conn
-      |> put_flash(:error, "You are not authorized to access that page")
+      |> put_flash(:error, "Du har ikke adgang til denne side")
       |> redirect(to: Routes.business_path(conn, :index))
       |> halt()
     end
