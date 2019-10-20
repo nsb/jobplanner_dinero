@@ -10,7 +10,13 @@ defmodule JobplannerDineroWeb.BusinessController do
   plug(:authorize_user when action in [:show, :edit, :update])
 
   def index(conn, _params) do
-    render(conn, "index.html")
+    businesses = conn.assigns[:current_user].businesses
+    case length(businesses) do
+      1 ->
+        redirect(conn, to: Routes.business_path(conn, :show, Enum.at(businesses, 0)))
+      _ ->
+        render(conn, "index.html")
+    end
   end
 
   def show(conn, %{"id" => id}) do
