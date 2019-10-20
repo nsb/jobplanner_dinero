@@ -13,6 +13,7 @@ defmodule JobplannerDinero.Application do
       # Start the endpoint when the application starts
       supervisor(JobplannerDineroWeb.Endpoint, []),
       # Start your own worker by calling: JobplannerDinero.Worker.start_link(arg1, arg2, arg3)
+      supervisor(Task.Supervisor, [[name: JobplannerDinero.SyncContactsToMyJobPlannerSupervisor]])
       # worker(JobplannerDinero.Worker, [arg1, arg2, arg3]),
     ]
 

@@ -6,14 +6,20 @@ defmodule JobplannerDineroWeb.BusinessController do
   alias JobplannerDinero.Account.User
   alias JobplannerDinero.Account.Business
 
+  @dinero_api Application.get_env(:jobplanner_dinero, :dinero_api)
+  @dinero_client_id System.get_env("DINERO_CLIENT_ID")
+  @dinero_client_secret System.get_env("DINERO_CLIENT_SECRET")
+
   plug(JobplannerDineroWeb.Plugs.AuthenticateUser when action in [:index, :show])
   plug(:authorize_user when action in [:show, :edit, :update])
 
   def index(conn, _params) do
     businesses = conn.assigns[:current_user].businesses
+
     case length(businesses) do
       1 ->
         redirect(conn, to: Routes.business_path(conn, :show, Enum.at(businesses, 0)))
+
       _ ->
         render(conn, "index.html")
     end
@@ -66,6 +72,20 @@ defmodule JobplannerDineroWeb.BusinessController do
          |> OAuth2.Client.put_header("Content-Type", "application/json")
          |> Business.create_invoice_webhook(business) do
       {:ok, business} ->
+        # Start importing Dinero contacts to myJobPlanner
+        Task.Supervisor.start_child(
+          JobplannerDinero.SyncContactsToMyJobPlannerSupervisor,
+          fn ->
+            import_dinero_contacts_to_myjobplanner(
+              business.dinero_id,
+              business.dinero_api_key,
+              business.jobplanner_id,
+              conn.assigns.current_user.jobplanner_access_token
+            )
+          end,
+          restart: :transient
+        )
+
         conn
         |> put_flash(:info, "Aktiverede Dinero integration successfuldt")
         |> redirect(to: Routes.business_path(conn, :show, business))
@@ -96,6 +116,71 @@ defmodule JobplannerDineroWeb.BusinessController do
         |> put_flash(:error, "Kunne ikke deaktivere Dinero integration")
         |> redirect(to: Routes.business_path(conn, :show, business))
         |> halt()
+    end
+  end
+
+  def import_dinero_contacts_to_myjobplanner(
+        dinero_id,
+        dinero_api_key,
+        jobplanner_business_id,
+        jobplanner_access_token
+      ) do
+    contact_fields =
+      "Name,ContactGuid,ExternalReference,IsPerson,Street,ZipCode,City,CountryKey,Phone,Email,Webpage,AttPerson,VatNumber,EanNumber,PaymentConditionType,PaymentConditionNumberOfDays,IsMember,MemberNumber,CreatedAt,UpdatedAt,DeletedAt"
+
+    client =
+      JobplannerOAuth2.client(jobplanner_access_token)
+      |> OAuth2.Client.put_header("Content-Type", "application/json")
+
+    with {:ok, %{"access_token" => access_token}} <-
+           @dinero_api.authentication(
+             @dinero_client_id,
+             @dinero_client_secret,
+             dinero_api_key
+           ),
+         {:ok, %{"Collection" => contacts}} <-
+           @dinero_api.get_contacts(dinero_id, access_token, fields: contact_fields) do
+      Enum.each(contacts, fn contact ->
+        [first_name, last_name] = String.split(contact["Name"], " ", parts: 2, trim: true)
+
+        body = %{
+          "business" => jobplanner_business_id,
+          "first_name" => first_name,
+          "last_name" => last_name,
+          "address1" => contact["Street"],
+          "city" => contact["City"],
+          "zip_code" => contact["ZipCode"],
+          "country" => contact["CountryKey"],
+          "address_use_property" => true,
+          "email" => contact["Email"],
+          "phone" => contact["Phone"],
+          "properties" => [
+            %{
+              "address1" => contact["Street"],
+              "city" => contact["City"],
+              "zip_code" => contact["ZipCode"],
+              "country" => contact["CountryKey"]
+            }
+          ],
+          "upcoming_visit_reminder_email_enabled" => true,
+          "external_id" => contact["ContactGuid"],
+          "imported_from" => "dinero",
+          "imported_via" => "myJobPlanner Dinero integration",
+          "is_business" => not contact["IsPerson"],
+          "business_name" => "string"
+        }
+
+        case OAuth2.Client.post(client, "https://api.myjobplanner.com/v1/clients/", body) do
+          {:ok, response} ->
+            response
+
+          {:error, error} ->
+            {:error, error}
+        end
+      end)
+    else
+      {:error, error} ->
+        error
     end
   end
 
