@@ -73,14 +73,16 @@ defmodule JobplannerDineroWeb.BusinessController do
          |> OAuth2.Client.put_header("Content-Type", "application/json")
          |> Business.create_invoice_webhook(business) do
       {:ok, business} ->
-        # Start importing Dinero contacts to myJobPlanner
-        Task.Supervisor.start_child(
-          JobplannerDinero.SyncAllContactsToMyJobPlannerSupervisor,
-          fn ->
-            import_dinero_contacts_to_myjobplanner(conn.assigns.current_user, business)
-          end,
-          restart: :transient
-        )
+        if business.import_contacts_to_jobplanner do
+          # Start importing Dinero contacts to myJobPlanner
+          Task.Supervisor.start_child(
+            JobplannerDinero.SyncAllContactsToMyJobPlannerSupervisor,
+            fn ->
+              import_dinero_contacts_to_myjobplanner(conn.assigns.current_user, business)
+            end,
+            restart: :transient
+          )
+        end
 
         conn
         |> put_flash(:info, "Aktiverede Dinero integration successfuldt")
@@ -171,7 +173,7 @@ defmodule JobplannerDineroWeb.BusinessController do
             case OAuth2.Client.post(client, "https://api.myjobplanner.com/v1/clients/", body) do
               {:ok, response} ->
                 Logger.info(
-                  "Successfully import contact #{contact["Name"]} with id #{response.body["id"]}"
+                  "Successfully imported contact #{contact["Name"]} with id #{response.body["id"]}"
                 )
 
               {:error, error} ->

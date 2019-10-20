@@ -13,6 +13,7 @@ defmodule JobplannerDinero.Account.Business do
     field(:dinero_api_key, :string)
     field(:dinero_access_token, :string)
     field(:is_active, :boolean, default: false)
+    field(:import_contacts_to_jobplanner, :boolean, default: true)
     field(:name, :string)
     field(:email, :string)
     has_many(:invoices, JobplannerDinero.Invoice)
@@ -33,6 +34,7 @@ defmodule JobplannerDinero.Account.Business do
       :jobplanner_webhook_id,
       :dinero_api_key,
       :is_active,
+      :import_contacts_to_jobplanner,
       :name,
       :email
     ])
