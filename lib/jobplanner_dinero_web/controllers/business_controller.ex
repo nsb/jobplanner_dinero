@@ -154,16 +154,15 @@ defmodule JobplannerDineroWeb.BusinessController do
       Enum.each(
         filtered_contacts,
         fn contact ->
-          [first_name | last_name] = String.split(contact["Name"], " ", parts: 2, trim: true)
-          Logger.error(first_name, last_name)
+          contact_name = String.split(contact["Name"], " ", parts: 2, trim: true)
 
           Task.Supervisor.start_child(
             JobplannerDinero.SyncOneContactToMyJobPlannerSupervisor,
             fn ->
               body = %{
                 "business" => business.jobplanner_id,
-                "first_name" => first_name || "",
-                "last_name" => last_name || "",
+                "first_name" => Enum.at(contact_name, 0),
+                "last_name" => Enum.at(contact_name, 1, ""),
                 "address1" => contact["Street"],
                 "city" => contact["City"],
                 "zip_code" => contact["ZipCode"],
