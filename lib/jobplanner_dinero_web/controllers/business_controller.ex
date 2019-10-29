@@ -165,9 +165,6 @@ defmodule JobplannerDineroWeb.BusinessController do
                    }) do
                 {:ok, %OAuth2.Response{body: %{"count" => count}}}
                 when count == 0 ->
-                  IO.inspect(count)
-
-                  # IO.inspect(clients)
 
                   body = %{
                     "business" => business.jobplanner_id,
