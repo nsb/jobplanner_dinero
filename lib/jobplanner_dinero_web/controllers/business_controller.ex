@@ -159,12 +159,14 @@ defmodule JobplannerDineroWeb.BusinessController do
           Task.Supervisor.start_child(
             JobplannerDinero.SyncOneContactToMyJobPlannerSupervisor,
             fn ->
+              # First check if the client already exists in jobplanner
               case Business.get_jobplanner_clients(client, %{
                      "business" => business.jobplanner_id,
                      "external_id" => contact["ContactGuid"]
                    }) do
                 {:ok, %OAuth2.Response{body: %{"count" => count}}}
                 when count == 0 ->
+                  # If the client does not exist, we go ahead and create it
 
                   body = %{
                     "business" => business.jobplanner_id,
