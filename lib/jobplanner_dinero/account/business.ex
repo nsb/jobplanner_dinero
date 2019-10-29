@@ -112,6 +112,10 @@ defmodule JobplannerDinero.Account.Business do
     end
   end
 
+  def get_jobplanner_clients(client, params) do
+    OAuth2.Client.get(client, "https://api.myjobplanner.com/v1/clients/", [], params: params)
+  end
+
   def request_dinero_token(client_id, client_secret, api_key) do
     encoded_client_id_and_secret = Base.encode64("#{client_id}:#{client_secret}")
     case :hackney.request(

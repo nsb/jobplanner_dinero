@@ -159,43 +159,65 @@ defmodule JobplannerDineroWeb.BusinessController do
           Task.Supervisor.start_child(
             JobplannerDinero.SyncOneContactToMyJobPlannerSupervisor,
             fn ->
-              body = %{
-                "business" => business.jobplanner_id,
-                "first_name" => Enum.at(contact_name, 0),
-                "last_name" => Enum.at(contact_name, 1, ""),
-                "address1" => contact["Street"],
-                "city" => contact["City"],
-                "zip_code" => contact["ZipCode"],
-                "country" => contact["CountryKey"],
-                "address_use_property" => true,
-                "email" => contact["Email"],
-                "phone" => contact["Phone"],
-                "properties" => [
-                  %{
+              case Business.get_jobplanner_clients(client, %{
+                     "business" => business.jobplanner_id,
+                     "external_id" => contact["ContactGuid"]
+                   }) do
+                {:ok, %OAuth2.Response{body: %{"count" => count}}}
+                when count == 0 ->
+                  IO.inspect(count)
+
+                  # IO.inspect(clients)
+
+                  body = %{
+                    "business" => business.jobplanner_id,
+                    "first_name" => Enum.at(contact_name, 0),
+                    "last_name" => Enum.at(contact_name, 1, ""),
                     "address1" => contact["Street"],
                     "city" => contact["City"],
                     "zip_code" => contact["ZipCode"],
-                    "country" => contact["CountryKey"]
+                    "country" => contact["CountryKey"],
+                    "address_use_property" => true,
+                    "email" => contact["Email"],
+                    "phone" => contact["Phone"],
+                    "properties" => [
+                      %{
+                        "address1" => contact["Street"],
+                        "city" => contact["City"],
+                        "zip_code" => contact["ZipCode"],
+                        "country" => contact["CountryKey"]
+                      }
+                    ],
+                    "upcoming_visit_reminder_email_enabled" => true,
+                    "external_id" => contact["ContactGuid"],
+                    "imported_from" => "dinero",
+                    "imported_via" => "myJobPlanner Dinero integration",
+                    "is_business" => not contact["IsPerson"],
+                    "business_name" => "string"
                   }
-                ],
-                "upcoming_visit_reminder_email_enabled" => true,
-                "external_id" => contact["ContactGuid"],
-                "imported_from" => "dinero",
-                "imported_via" => "myJobPlanner Dinero integration",
-                "is_business" => not contact["IsPerson"],
-                "business_name" => "string"
-              }
 
-              case OAuth2.Client.post(client, "https://api.myjobplanner.com/v1/clients/", body) do
+                  case OAuth2.Client.post(
+                         client,
+                         "https://api.myjobplanner.com/v1/clients/",
+                         body
+                       ) do
+                    {:ok, response} ->
+                      Logger.info(
+                        "Successfully imported contact #{contact["Name"]} with id #{
+                          response.body["id"]
+                        }"
+                      )
+
+                    {:error, error} ->
+                      {:error, error}
+                  end
+
                 {:ok, response} ->
                   Logger.info(
-                    "Successfully imported contact #{contact["Name"]} with id #{
-                      response.body["id"]
-                    }"
+                    "Skipping import of #{contact["Name"]} with Guid #{contact["ContactGuid"]}"
                   )
 
-                {:error, error} ->
-                  {:error, error}
+                  {:ok, response}
               end
             end,
             restart: :transient
