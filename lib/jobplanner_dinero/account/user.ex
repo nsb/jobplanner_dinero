@@ -15,7 +15,8 @@ defmodule JobplannerDinero.Account.User do
     many_to_many(
       :businesses,
       JobplannerDinero.Account.Business,
-      join_through: "account_users_businesses"
+      join_through: "account_users_businesses",
+      on_replace: :delete
     )
 
     timestamps()
