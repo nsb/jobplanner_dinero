@@ -17,7 +17,7 @@ defmodule JobplannerDineroWeb.AuthController do
   @spec delete(Plug.Conn.t(), any()) :: Plug.Conn.t()
   def delete(conn, _params) do
     conn
-    |> put_flash(:info, "You have been logged out!")
+    |> put_flash(:info, "Du er logget ud!")
     |> configure_session(drop: true)
     |> redirect(to: "/")
   end
@@ -53,7 +53,6 @@ defmodule JobplannerDineroWeb.AuthController do
         # Save the user id in the session under `:current_user` and redirect to /
         conn
         |> put_session(:current_user_id, user.id)
-        |> put_flash(:info, "You have successfully signed in!")
         |> redirect(to: "/")
       end)
 
