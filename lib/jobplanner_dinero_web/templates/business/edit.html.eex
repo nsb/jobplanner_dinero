@@ -1,4 +1,6 @@
 <h2><%= @business.name %></h2>
+  <p class="lead">Med Dinero Add-on kan du automatisk oprette faktura via myJobPlanner.
+  Du kan også importere dine Dinero kontakter til myJobPlanner.</p>
 <p>
   Her skal du angive din Dinero API nøgle og Dinero ID.
    <ul>
@@ -11,15 +13,22 @@
 <%= form_for @changeset, Routes.business_path(@conn, :update, @business), fn f -> %>
   <div class="form-group">
     <%= label f, :dinero_api_key, "Dinero API nøgle" %>
-    <%= text_input f, :dinero_api_key, class: "form-control" %>
+    <%= text_input f, :dinero_api_key, class: "form-control", placeholder: "Angiv Dinero API Nøgle" %>
     <%= error_tag f, :dinero_api_key %>
   </div>
   <div class="form-group">
     <%= label f, :dinero_id, "Dinero ID" %>
-    <%= text_input f, :dinero_id, class: "form-control" %>
+    <%= text_input f, :dinero_id, class: "form-control", placeholder: "Angiv Dinero ID" %>
     <%= error_tag f, :dinero_id %>
   </div>
-  <div>
+  <div class="form-group">
+    <div class="form-check">
+      <%= checkbox f, :import_contacts_to_jobplanner, class: "form-check-input" %>
+      <%= label f, :import_contacts_to_jobplanner, "Importer Dinero kontakter til myJobPlanner?" %>
+      <%= error_tag f, :import_contacts_to_jobplanner %>
+    </div>
+  </div>
+  <div class="form-group">
     <%= submit "Gem", class: "btn btn-primary" %>
   </div>
 <% end %>
