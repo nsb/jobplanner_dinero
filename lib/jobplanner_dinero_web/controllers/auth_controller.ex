@@ -47,7 +47,7 @@ defmodule JobplannerDineroWeb.AuthController do
           |> User.upsert_by!(:jobplanner_id)
           |> Repo.preload(:businesses)
           |> Ecto.Changeset.change()
-          |> Ecto.Changeset.put_assoc(:businesses, businesses)
+          |> Ecto.Changeset.put_assoc(:businesses, businesses, on_replace: :delete)
           |> Repo.update!()
 
         # Save the user id in the session under `:current_user` and redirect to /
