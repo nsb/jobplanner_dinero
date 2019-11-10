@@ -38,6 +38,8 @@ defmodule JobplannerDinero.Account.Business do
       :name,
       :email
     ])
+    |> update_change(:dinero_id, &String.trim/1)
+    |> update_change(:dinero_api_key, &String.trim/1)
     |> validate_required([:jobplanner_id, :name])
     |> validate_format(:email, ~r/@/)
   end
