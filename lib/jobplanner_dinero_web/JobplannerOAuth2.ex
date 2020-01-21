@@ -9,9 +9,9 @@ defmodule JobplannerDineroWeb.JobplannerOAuth2 do
       client_id: System.get_env("JOBPLANNER_CLIENT_ID"),
       client_secret: System.get_env("JOBPLANNER_CLIENT_SECRET"),
       redirect_uri: System.get_env("REDIRECT_URI") || "https://localhost:4000/auth/jobplanner/callback",
-      site: "https://api.myjobplanner.com",
-      authorize_url: "https://api.myjobplanner.com/o/authorize/",
-      token_url: "https://api.myjobplanner.com/o/token/",
+      site: "https://auth.myjobplanner.com",
+      authorize_url: "https://auth.myjobplanner.com/o/authorize/",
+      token_url: "https://auth.myjobplanner.com/o/token/",
       token: token
     ])
   end
