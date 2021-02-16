@@ -192,7 +192,7 @@ defmodule JobplannerDineroWeb.BusinessController do
                     "imported_from" => "dinero",
                     "imported_via" => "myJobPlanner Dinero integration",
                     "is_business" => not contact["IsPerson"],
-                    "business_name" => "string"
+                    "business_name" => (not contact["IsPerson"] && contact["Name"]) || ""
                   }
 
                   case OAuth2.Client.post(
