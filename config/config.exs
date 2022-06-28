@@ -35,9 +35,9 @@ config :jobplanner_dinero, JobplannerDinero.Repo,
   hostname: System.get_env("DB_HOST") || "db",
   pool_size: 10
 
-config :ex_cldr,
-   default_locale: "en",
-   locales: ["en", "da"]
+# config :ex_cldr,
+#    default_locale: "en",
+#    locales: ["en", "da"]
 
 config :jobplanner_dinero, Jobplanner,
   client_id: System.get_env("JOBPLANNER_CLIENT_ID"),

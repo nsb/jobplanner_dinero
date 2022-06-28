@@ -16,4 +16,7 @@ dev-shell:
 test:
 	docker-compose run web mix test
 
+migrate:
+	docker-compose run web mix ecto.migrate
+
 .PHONY: test
