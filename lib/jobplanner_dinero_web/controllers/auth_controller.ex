@@ -1,6 +1,7 @@
 defmodule JobplannerDineroWeb.AuthController do
   use JobplannerDineroWeb, :controller
   require Logger
+  require DateTime
   alias JobplannerDinero.Repo
   alias JobplannerDinero.Account.User
   alias JobplannerDinero.Account.Business
@@ -66,7 +67,9 @@ defmodule JobplannerDineroWeb.AuthController do
             %{
               id: Enum.at(businesses, 0).id, # TODO: We should not take users first business, but figure out which business to use
               dinero_access_token: client.token.access_token,
-              dinero_refresh_token: client.token.refresh_token
+              dinero_access_token_expires: DateTime.utc_now() |> DateTime.add(3600, :second), # TODO: We should get expiry time from token
+              dinero_refresh_token: client.token.refresh_token,
+              dinero_refresh_token_expires: DateTime.utc_now() |> DateTime.add(3600 * 24 * 30, :second)
             }, :id)
           redirect(conn, to: "/")
         end)
