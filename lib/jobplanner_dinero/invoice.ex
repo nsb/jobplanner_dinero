@@ -43,12 +43,7 @@ defmodule JobplannerDinero.Invoice do
         Enum.flat_map(invoice["visits"], fn visit ->
           Enum.map(visit["line_items"], fn line_item ->
             date = visit["begins"]
-              # case DateTime.from_iso8601(visit["begins"]) do
-              #   {:ok, dt, _} ->
-              #     Timezone.convert(dt, "Europe/Copenhagen") |> Cldr.Date.to_string!(locale: "da")
-              # end
-
-            %{line_item_to_product_line(line_item) | Comments: date}
+            %{line_item_to_product_line(line_item) | Comments: Enum.join([date.year, date.month, date.day], "/")}
           end)
         end)
     }
