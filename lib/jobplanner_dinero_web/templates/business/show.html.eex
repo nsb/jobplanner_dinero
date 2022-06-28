@@ -23,8 +23,8 @@
       <% end %>
     <% else %>
        <div>
-          <h5>Access Dinero.</h5>
-          <%= link "Giv adgang til", to: @authorize_url, class: "btn btn-primary btn-lg" %>
+          <h5>Dinero adgang.</h5>
+          <%= link "Giv adgang til Dinero", to: @authorize_url, class: "btn btn-primary btn-lg" %>
         </div>
      <% end %>
   </p>
