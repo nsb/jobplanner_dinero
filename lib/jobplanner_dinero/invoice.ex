@@ -42,12 +42,11 @@ defmodule JobplannerDinero.Invoice do
       ProductLines:
         Enum.flat_map(invoice["visits"], fn visit ->
           Enum.map(visit["line_items"], fn line_item ->
-            date =
+            {:ok, date} =
               case DateTime.from_iso8601(visit["begins"]) do
                 {:ok, dt, _offset } ->
                   Timezone.convert(dt, "Europe/Copenhagen") |> Timex.format("%Y-%m-%d", :strftime)
               end
-
             %{line_item_to_product_line(line_item) | Comments: date}
           end)
         end)
