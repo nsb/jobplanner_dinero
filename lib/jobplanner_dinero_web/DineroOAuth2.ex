@@ -16,6 +16,19 @@ defmodule JobplannerDineroWeb.DineroOAuth2 do
     ])
   end
 
+  def refresh_client(refresh_token \\ nil) do
+    OAuth2.Client.new([
+      strategy: OAuth2.Strategy.Refresh,
+      client_id: System.get_env("DINERO_CLIENT_ID2"),
+      client_secret: System.get_env("DINERO_CLIENT_SECRET2"),
+      redirect_uri: System.get_env("DINERO_REDIRECT_URI2") || "https://dinero.myjobplanner.com/auth/dinero/callback",
+      site: "https://connect.visma.com",
+      authorize_url: "https://connect.visma.com/connect/authorize",
+      token_url: "https://connect.visma.com/connect/token",
+      params: %{"refresh_token" => refresh_token}
+    ])
+  end
+
   @spec authorize_url!() :: binary()
   def authorize_url! do
     OAuth2.Client.authorize_url!(client(), scope: "dineropublicapi:read dineropublicapi:write offline_access")
