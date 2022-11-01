@@ -4,13 +4,16 @@ defmodule JobplannerDineroWeb.InvoiceController do
   require Logger
 
   alias JobplannerDinero.Repo
+  alias JobplannerDinero.Account.Business
   alias JobplannerDinero.Invoice
+  alias JobplannerDineroWeb.DineroOAuth2
 
   @dinero_api Application.get_env(:jobplanner_dinero, :dinero_api)
-  @dinero_client_id System.get_env("DINERO_CLIENT_ID")
-  @dinero_client_secret System.get_env("DINERO_CLIENT_SECRET")
+  # @dinero_client_id System.get_env("DINERO_CLIENT_ID")
+  # @dinero_client_secret System.get_env("DINERO_CLIENT_SECRET")
 
   def create(conn, %{"hook" => %{"event" => "invoice.added"}, "data" => data}) do
+
     # save invoice to database
     with {:ok,
           %{invoice: %{"client" => _client} = invoice} = webhook_data} <-
@@ -18,20 +21,23 @@ defmodule JobplannerDineroWeb.InvoiceController do
 
          # load related business
          invoice_with_business <- Repo.preload(webhook_data, :business),
+         business <- invoice_with_business.business,
 
-         # get access token from Dinero
-         {:ok, %{"access_token" => access_token}} <-
-           @dinero_api.authentication(
-             @dinero_client_id,
-             @dinero_client_secret,
-             invoice_with_business.business.dinero_api_key
-           ),
+         business <- refresh_token!(business),
+
+         #  # get access token from Dinero
+        #  {:ok, %{"access_token" => access_token}} <-
+        #    @dinero_api.authentication(
+        #      @dinero_client_id,
+        #      @dinero_client_secret,
+        #      invoice_with_business.business.dinero_api_key
+        #    ),
 
          # get or create Dinero contact
          {:ok, contact} <-
            get_or_create_contact(
              invoice_with_business.business.dinero_id,
-             access_token,
+             business.dinero_access_token,
              invoice
            ),
 
@@ -39,7 +45,7 @@ defmodule JobplannerDineroWeb.InvoiceController do
          {:ok, %{"Guid" => invoice_guid}} <-
            @dinero_api.create_invoice(
              invoice_with_business.business.dinero_id,
-             access_token,
+             business.dinero_access_token,
              Invoice.to_dinero_invoice(
                webhook_data,
                contact |> Map.get("ContactGuid") || contact |> Map.get("contactGuid")
@@ -64,6 +70,26 @@ defmodule JobplannerDineroWeb.InvoiceController do
         |> put_status(400)
         |> json(err)
     end
+  end
+
+  defp refresh_token!(business) do
+    IO.inspect(DateTime.utc_now())
+    IO.inspect(business.dinero_access_token_expires)
+    if DateTime.utc_now() > business.dinero_access_token_expires do
+      client = DineroOAuth2.refresh_client(business.dinero_refresh_token)
+      |> OAuth2.Client.get_token!()
+
+      business = Business.upsert_by!(
+        %{
+          id: business.id,
+          dinero_access_token: client.token.access_token,
+          dinero_access_token_expires: DateTime.utc_now() |> DateTime.add(3600, :second), # TODO: We should get expiry time from token
+          dinero_refresh_token: client.token.refresh_token,
+          dinero_refresh_token_expires: DateTime.utc_now() |> DateTime.add(3600 * 24 * 30, :second)
+        }, :id)
+      business
+    end
+    business
   end
 
   defp get_or_create_contact(

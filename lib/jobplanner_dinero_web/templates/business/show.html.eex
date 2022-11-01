@@ -4,29 +4,28 @@
   <p class="lead">Med Dinero Add-on kan du automatisk oprette faktura via myJobPlanner.
   Du kan også importere dine Dinero kontakter til myJobPlanner.</p>
   <hr class="my-4">
-  <%# <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
   <p class="lead">
-    <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
-  </p> %>
-
-  <div>
-    <%= link "Rediger indstillinger", to: Routes.business_path(@conn, :edit, @business.id) %>
-  </div>
-  <p class="lead">
-    <%= if @business.is_active do %>
-      <%= form_for @changeset, Routes.business_path(@conn, :deactivate, @business), fn _ -> %>
-        <div>
-          <h5>Dinero integration er aktiv.</h5>
-          <%= submit "Deaktiver Dinero Integration", class: "btn btn-warning" %>
-        </div>
+    <%= if @business.dinero_access_token != nil do %>
+      <%= if @business.is_active do %>
+        <%= form_for @changeset, Routes.business_path(@conn, :deactivate, @business), fn _ -> %>
+          <div>
+            <h5>Dinero integration er aktiv.</h5>
+            <%= submit "Deaktiver Dinero Integration", class: "btn btn-warning" %>
+          </div>
+        <% end %>
+      <% else %>
+        <%= form_for @changeset, Routes.business_path(@conn, :activate, @business), fn _ -> %>
+          <div>
+            <h5>Dinero integration er ikke aktiv.</h5>
+            <%= submit "Aktiver Dinero Integration", class: "btn btn-primary btn-lg" %>
+          </div>
+        <% end %>
       <% end %>
     <% else %>
-      <%= form_for @changeset, Routes.business_path(@conn, :activate, @business), fn _ -> %>
-        <div>
-          <h5>Dinero integration er ikke aktiv.</h5>
-          <%= submit "Aktiver Dinero Integration", class: "btn btn-primary btn-lg" %>
+       <div>
+          <h5>Dinero adgang.</h5>
+          <%= link "Giv adgang til Dinero", to: @authorize_url, class: "btn btn-primary btn-lg" %>
         </div>
-      <% end %>
-    <% end %>
+     <% end %>
   </p>
 </div>

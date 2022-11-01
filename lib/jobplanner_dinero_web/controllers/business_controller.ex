@@ -3,13 +3,14 @@ defmodule JobplannerDineroWeb.BusinessController do
   require Logger
   alias JobplannerDinero.Repo
   alias JobplannerDineroWeb.JobplannerOAuth2
+  alias JobplannerDineroWeb.DineroOAuth2
   alias JobplannerDinero.Auth.Authorizer
   alias JobplannerDinero.Account.User
   alias JobplannerDinero.Account.Business
 
   @dinero_api Application.get_env(:jobplanner_dinero, :dinero_api)
-  @dinero_client_id System.get_env("DINERO_CLIENT_ID")
-  @dinero_client_secret System.get_env("DINERO_CLIENT_SECRET")
+  @dinero_client_id System.get_env("DINERO_CLIENT_ID2")
+  @dinero_client_secret System.get_env("DINERO_CLIENT_SECRET2")
 
   plug(JobplannerDineroWeb.Plugs.AuthenticateUser when action in [:index, :show])
   plug(:authorize_user when action in [:show, :edit, :update])
@@ -28,15 +29,8 @@ defmodule JobplannerDineroWeb.BusinessController do
 
   def show(conn, %{"id" => id}) do
     business = User.get_business(conn.assigns.current_user, String.to_integer(id))
-
-    case business.dinero_api_key do
-      nil ->
-        redirect(conn, to: Routes.business_path(conn, :edit, business))
-
-      _ ->
-        changeset = Business.change_business(business)
-        render(conn, "show.html", business: business, changeset: changeset)
-    end
+    changeset = Business.change_business(business)
+    render(conn, "show.html", authorize_url: DineroOAuth2.authorize_url!(), business: business, changeset: changeset)
   end
 
   def edit(conn, %{"id" => id}) do
